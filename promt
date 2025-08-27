@@ -1,0 +1,185 @@
+
+Viết một chương trình C++ hoàn chỉnh để xây dựng một ứng dụng danh bạ điện thoại di động với giao diện dòng lệnh (CLI - Command Line Interface) tương tác được, cho phép người dùng dễ dàng nhập liệu, nhận phản hồi tức thời, và thao tác mượt mà. Ứng dụng phải sử dụng cây tìm kiếm nhị phân (BST) để lưu trữ và quản lý các liên hệ, std::set để đảm bảo không có số điện thoại trùng lặp, và Windows API để tạo giao diện người dùng trực quan với màu sắc, xóa màn hình console, và các thông báo phản hồi rõ ràng. Chương trình bắt buộc sử dụng câu lệnh using namespace std; để đơn giản hóa việc truy cập các thành phần của thư viện chuẩn C++. Không được sử dụng std::vector trong bất kỳ phần nào của chương trình. Ứng dụng phải áp dụng một design pattern (ưu tiên Singleton để đảm bảo chỉ có một instance của danh bạ, hoặc Factory để tạo các đối tượng liên hệ) để tăng tính bảo trì và khả năng mở rộng của mã.
+Yêu cầu chi tiết:
+1. Cấu trúc dữ liệu:
+
+Tập hợp (std::set): Sử dụng std::set để lưu trữ tất cả số điện thoại của các liên hệ, đảm bảo không có số điện thoại nào bị trùng lặp. Kiểm tra trùng lặp phải được thực hiện trước khi thêm liên hệ mới, với thông báo lỗi rõ ràng nếu số điện thoại đã tồn tại.
+Cây tìm kiếm nhị phân (BST): Triển khai thủ công một cây tìm kiếm nhị phân (không cần tự cân bằng) để lưu trữ các đối tượng liên hệ, sắp xếp theo tên liên hệ (name) để hỗ trợ tìm kiếm nhanh (O(log n) trong trường hợp trung bình) và hiển thị danh bạ theo thứ tự bảng chữ cái. Không được sử dụng std::map, std::set, hoặc bất kỳ cấu trúc dữ liệu nào khác (bao gồm cả std::vector) để thay thế BST; cây phải được triển khai thủ công với các thao tác chèn, xóa, tìm kiếm, và duyệt in-order.
+
+2. Đối tượng liên hệ (Contact):
+
+Định nghĩa một struct hoặc class có tên là Contact với các thuộc tính:
+
+std::string name: Tên của liên hệ (bắt buộc, không được để trống).
+std::string phoneNumber: Số điện thoại của liên hệ (bắt buộc, phải là chuỗi số hợp lệ, ví dụ: "0123456789").
+std::string email: Địa chỉ email của liên hệ (không bắt buộc, có thể để trống).
+
+
+Cung cấp một constructor cho Contact để khởi tạo các thuộc tính.
+Thêm một phương thức (ví dụ: display()) để in thông tin liên hệ theo định dạng rõ ràng (tên, số điện thoại, email).
+
+3. Design Pattern:
+
+Áp dụng một design pattern phù hợp để quản lý danh bạ:
+
+Ưu tiên Singleton: Đảm bảo chỉ có một instance của lớp PhoneBook (hoặc tương tự) để quản lý danh bạ, tránh việc tạo nhiều danh bạ không cần thiết. Singleton phải được triển khai với một phương thức tĩnh getInstance() để truy cập instance duy nhất.
+Tùy chọn Factory: Nếu không sử dụng Singleton, sử dụng Factory pattern để tạo các đối tượng Contact, đảm bảo tính linh hoạt khi cần mở rộng (ví dụ: thêm các loại liên hệ khác trong tương lai).
+
+
+Giải thích ngắn gọn trong chú thích mã về cách design pattern được áp dụng và lợi ích của nó (ví dụ: Singleton đảm bảo tính duy nhất, Factory tăng tính mở rộng).
+
+4. Chức năng chính của ứng dụng:
+
+Thêm liên hệ (Add Contact):
+
+Yêu cầu người dùng nhập tên, số điện thoại, và email (email có thể để trống).
+Kiểm tra tính hợp lệ của đầu vào:
+
+Tên: Không được để trống, chỉ chứa chữ cái, số, và khoảng trắng.
+Số điện thoại: Phải là chuỗi số, độ dài từ 10 đến 15 ký tự.
+Kiểm tra xem số điện thoại đã tồn tại trong std::set chưa. Nếu đã tồn tại, hiển thị thông báo lỗi (màu đỏ sử dụng Windows API) và cho phép người dùng nhập lại hoặc hủy thao tác.
+
+
+Nếu đầu vào hợp lệ và số điện thoại chưa tồn tại, thêm liên hệ vào BST và số điện thoại vào std::set. Hiển thị thông báo thành công (màu xanh lá cây).
+
+
+Xóa liên hệ (Delete Contact):
+
+Yêu cầu người dùng nhập tên liên hệ cần xóa.
+Tìm kiếm liên hệ trong BST. Nếu không tìm thấy, hiển thị thông báo lỗi (màu đỏ) và cho phép thử lại hoặc quay lại menu.
+Nếu tìm thấy, xóa liên hệ khỏi BST và số điện thoại khỏi std::set. Hiển thị thông báo thành công (màu xanh lá cây).
+
+
+Tìm kiếm liên hệ (Search Contact):
+
+Yêu cầu người dùng nhập tên liên hệ cần tìm.
+Tìm kiếm trong BST và hiển thị thông tin chi tiết của liên hệ (tên, số điện thoại, email) với màu chữ vàng nếu tìm thấy. Nếu không tìm thấy, hiển thị thông báo lỗi (màu đỏ) và cho phép thử lại hoặc quay lại menu.
+
+
+Hiển thị tất cả liên hệ (Display All Contacts):
+
+Duyệt BST theo thứ tự in-order để hiển thị tất cả liên hệ theo thứ tự bảng chữ cái (dựa trên tên).
+Mỗi liên hệ được hiển thị với định dạng rõ ràng (ví dụ: sử dụng dấu phân cách như |, -, hoặc bảng đơn giản), với màu chữ trắng hoặc xanh dương cho dễ đọc.
+Nếu danh bạ rỗng, hiển thị thông báo "Danh bạ trống" (màu vàng).
+
+
+Thoát (Exit):
+
+Kết thúc chương trình với thông báo tạm biệt (màu xanh lá cây) và xóa màn hình console trước khi thoát.
+
+
+
+5. Giao diện người dùng (CLI) tương tác:
+
+Sử dụng Windows API (thư viện <windows.h>) để cải thiện tính tương tác và trải nghiệm người dùng:
+
+Xóa màn hình console: Sử dụng system("cls") trước khi hiển thị menu hoặc kết quả của mỗi thao tác để giữ giao diện sạch sẽ.
+Màu sắc chữ: Sử dụng SetConsoleTextAttribute để thay đổi màu chữ:
+
+Màu đỏ (FOREGROUND_RED) cho thông báo lỗi.
+Màu xanh lá cây (FOREGROUND_GREEN) cho thông báo thành công hoặc tạm biệt.
+Màu vàng (FOREGROUND_RED | FOREGROUND_GREEN) cho thông tin liên hệ hoặc thông báo đặc biệt (như danh bạ trống).
+Màu trắng (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE) hoặc xanh dương (FOREGROUND_BLUE) cho menu và danh sách liên hệ.
+
+
+Định dạng đầu ra: Sử dụng các ký tự như = hoặc - để tạo khung cho menu và kết quả, giúp giao diện trực quan hơn.
+
+
+Hiển thị một menu chính với các tùy chọn:
+text==============================
+     Danh Bạ Điện Thoại
+==============================
+1. Thêm liên hệ
+2. Xóa liên hệ
+3. Tìm kiếm liên hệ
+4. Hiển thị tất cả liên hệ
+5. Thoát
+Vui lòng chọn một chức năng (1-5): _
+
+Tính tương tác:
+
+Sau mỗi thao tác (thêm, xóa, tìm kiếm, hiển thị), hiển thị kết quả (thành công hoặc lỗi) và yêu cầu người dùng nhấn phím (ví dụ: "Nhấn Enter để quay lại menu...") để tiếp tục.
+Xử lý đầu vào không hợp lệ (ví dụ: chọn số ngoài khoảng 1-5 trong menu, tên trống, số điện thoại không hợp lệ) bằng cách hiển thị thông báo lỗi (màu đỏ) và yêu cầu nhập lại.
+Cho phép người dùng nhập lại hoặc hủy thao tác khi xảy ra lỗi (ví dụ: số điện thoại trùng lặp, tên không hợp lệ).
+
+
+Đảm bảo giao diện rõ ràng, dễ sử dụng, với các thông báo được định dạng đẹp mắt, có màu sắc, và phản hồi tức thời.
+
+6. Yêu cầu triển khai:
+
+Câu lệnh bắt buộc: Sử dụng using namespace std; trong mã nguồn.
+Cung cấp một tệp mã nguồn C++ hoàn chỉnh (không chia thành nhiều tệp) với:
+
+Các thư viện cần thiết: <iostream>, <set>, <string>, <windows.h>.
+Cấu trúc Contact và cấu trúc Node cho cây tìm kiếm nhị phân.
+Một lớp PhoneBook (hoặc tương tự) để quản lý danh bạ, được triển khai với design pattern (Singleton hoặc Factory), bao gồm các phương thức cho các chức năng chính (thêm, xóa, tìm kiếm, hiển thị).
+Triển khai thủ công cây tìm kiếm nhị phân với các thao tác:
+
+Chèn liên hệ (insert).
+Xóa liên hệ (remove).
+Tìm kiếm liên hệ (search).
+Duyệt in-order để hiển thị tất cả liên hệ (displayAll).
+
+
+Hàm main() để chạy chương trình, hiển thị menu CLI, và xử lý tương tác người dùng.
+
+
+Chú thích (comments): Thêm các chú thích rõ ràng trong mã để giải thích:
+
+Mục đích của các hàm (ví dụ: chèn, xóa, tìm kiếm, duyệt in-order).
+Các bước trong các thao tác của BST.
+Cách sử dụng Windows API để cải thiện giao diện (xóa màn hình, màu sắc).
+Cách triển khai và lợi ích của design pattern được sử dụng (Singleton hoặc Factory).
+Cách xử lý đầu vào người dùng và các trường hợp lỗi.
+
+
+Đầu ra bổ sung: Cung cấp một đoạn văn ngắn (khoảng 100-150 từ) giải thích cách chương trình hoạt động và lý do tại sao sử dụng cây tìm kiếm nhị phân, std::set, và design pattern là lựa chọn tốt cho bài toán này. Đề cập đến:
+
+Hiệu quả của BST (O(log n) cho tìm kiếm/chèn/xóa trong trường hợp trung bình, duyệt in-order để hiển thị thứ tự).
+Lợi ích của std::set trong việc đảm bảo không trùng lặp số điện thoại (O(log n) cho kiểm tra và chèn).
+Vai trò của Windows API trong việc cải thiện trải nghiệm người dùng.
+Lợi ích của design pattern (ví dụ: Singleton đảm bảo tính duy nhất, Factory hỗ trợ mở rộng).
+
+
+
+7. Ví dụ về giao diện đầu ra:
+text==============================
+       Danh Bạ Điện Thoại
+==============================
+1. Thêm liên hệ
+2. Xóa liên hệ
+3. Tìm kiếm liên hệ
+4. Hiển thị tất cả liên hệ
+5. Thoát
+Vui lòng chọn một chức năng (1-5): 1
+
+Nhập tên: Nguyen Van A
+Nhập số điện thoại: 0123456789
+Nhập email: nguyen.a@example.com
+[Thành công] Liên hệ Nguyen Van A đã được thêm!
+Nhấn Enter để quay lại menu...
+
+==============================
+       Danh Bạ Điện Thoại
+==============================
+1. Thêm liên hệ
+2. Xóa liên hệ
+3. Tìm kiếm liên hệ
+4. Hiển thị tất cả liên hệ
+5. Thoát
+Vui lòng chọn một chức năng (1-5): _
+8. Lưu ý:
+
+Đảm bảo mã có thể biên dịch và chạy được trên hệ điều hành Windows (do sử dụng Windows API).
+Xử lý các trường hợp ngoại lệ:
+
+Đầu vào không hợp lệ (tên trống, số điện thoại không phải số hoặc không đúng độ dài, lựa chọn menu sai).
+Danh bạ rỗng khi tìm kiếm hoặc hiển thị.
+
+
+Không sử dụng std::vector hoặc bất kỳ cấu trúc dữ liệu nào khác ngoài BST và std::set cho việc lưu trữ dữ liệu chính.
+Tối ưu hóa mã để dễ đọc, dễ bảo trì, và có giao diện người dùng thân thiện, tương tác tốt.
+Đảm bảo design pattern được triển khai đúng cách và được giải thích rõ ràng trong chú thích.
+
+
+bắc buộc: 1 file được được code quá 200 dòng 

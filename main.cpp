@@ -1,26 +1,77 @@
-#include "ContactUI.h"
-#include "ContactException.h"
+#include "PhoneBook.h"
+#include "Exceptions.h"
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
+/**
+ * @brief Hàm main - điểm khởi đầu của chương trình
+ * Quản lý menu chính và tương tác với người dùng
+ */
 int main() {
-    try {
-        ContactUI app;
-        app.run();
-    } catch (const ContactException& e) {
-        cout << " Lỗi hệ thống: " << e.what() << endl;
-        cout << "Vui lòng thử lại hoặc liên hệ hỗ trợ." << endl;
-        return 1;
-    } catch (const exception& e) {
-        cout << " Lỗi không xác định: " << e.what() << endl;
-        cout << "Vui lòng khởi động lại ứng dụng." << endl;
-        return 1;
-    } catch (...) {
-        cout << " Lỗi nghiêm trọng không xác định!" << endl;
-        cout << "Vui lòng khởi động lại ứng dụng hoặc liên hệ hỗ trợ." << endl;
-        return 1;
-    }
+    // Thiết lập locale cho tiếng Việt
+    system("chcp 65001 > nul");
+    
+    PhoneBook* phoneBook = PhoneBook::getInstance();
+    int choice;
+    
+    do {
+        try {
+            phoneBook->showMainMenu();
+            
+            // Nhập lựa chọn từ người dùng
+            if (!(cin >> choice)) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                throw UIException::invalidMenuChoice("không phải số");
+            }
+            
+            // Xử lý lựa chọn
+            switch (choice) {
+                case 1:
+                    phoneBook->addContact();
+                    break;
+                case 2:
+                    phoneBook->deleteContact();
+                    break;
+                case 3:
+                    phoneBook->searchContact();
+                    break;
+                case 4:
+                    phoneBook->displayAllContacts();
+                    break;
+                case 5:
+                    phoneBook->showGoodbye();
+                    break;
+                default:
+                    throw UIException::invalidMenuChoice(to_string(choice));
+            }
+            
+        } catch (const ContactValidationException& e) {
+            phoneBook->showError("Lỗi validation: " + string(e.what()));
+            phoneBook->waitForEnter();
+        } catch (const ContactNotFoundException& e) {
+            phoneBook->showError("Lỗi tìm kiếm: " + string(e.what()));
+            phoneBook->waitForEnter();
+        } catch (const DataStructureException& e) {
+            phoneBook->showError("Lỗi cấu trúc dữ liệu: " + string(e.what()));
+            phoneBook->waitForEnter();
+        } catch (const UIException& e) {
+            phoneBook->showError("Lỗi giao diện: " + string(e.what()));
+            phoneBook->waitForEnter();
+        } catch (const SystemException& e) {
+            phoneBook->showError("Lỗi hệ thống: " + string(e.what()));
+            phoneBook->waitForEnter();
+        } catch (const ConfigurationException& e) {
+            phoneBook->showError("Lỗi cấu hình: " + string(e.what()));
+            phoneBook->waitForEnter();
+        } catch (const exception& e) {
+            phoneBook->showError("Lỗi không xác định: " + string(e.what()));
+            phoneBook->waitForEnter();
+        }
+        
+    } while (choice != 5);
     
     return 0;
 }

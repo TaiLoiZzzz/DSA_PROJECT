@@ -1,4 +1,4 @@
-# Makefile cho ứng dụng Danh Bạ Điện Thoại
+# Makefile cho ứng dụng Danh Bạ Điện Thoại (Linux)
 # Sử dụng g++ compiler
 
 # Biến
@@ -7,10 +7,13 @@ CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic
 TARGET = phonebook
 DEMO_TARGET = exception_demo
 ADVANCED_DEMO_TARGET = advanced_demo
-SOURCES = main.cpp
+TEST_TARGET = test_input
+MEMORY_TEST_TARGET = test_memory
+SOURCES = main_linux.cpp
 DEMO_SOURCES = ExceptionDemo.cpp
 ADVANCED_DEMO_SOURCES = AdvancedDemo.cpp
-HEADERS = Contact.h BSTNode.h BinarySearchTree.h PhoneBook.h UI.h Exceptions.h ExceptionLogger.h ErrorHandler.h AdvancedValidator.h
+TEST_SOURCES = test_input.cpp test_memory.cpp
+HEADERS = Contact.h BSTNode.h BinarySearchTree.h PhoneBook.h UI_linux.h Exceptions.h ExceptionLogger.h ErrorHandler.h AdvancedValidator.h
 
 # Mục tiêu mặc định
 all: $(TARGET)
@@ -39,20 +42,28 @@ advanced: $(ADVANCED_DEMO_TARGET)
 $(ADVANCED_DEMO_TARGET): $(ADVANCED_DEMO_SOURCES) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(ADVANCED_DEMO_TARGET) $(ADVANCED_DEMO_SOURCES)
 
-# Dọn dẹp file biên dịch
+# Biên dịch test input
+$(TEST_TARGET): test_input.cpp
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) test_input.cpp
+
+# Biên dịch test memory
+$(MEMORY_TEST_TARGET): test_memory.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -o $(MEMORY_TEST_TARGET) test_memory.cpp
+
+# Dọn dẹp file biên dịch (Linux)
 clean:
-	del /Q $(TARGET).exe $(DEMO_TARGET).exe $(ADVANCED_DEMO_TARGET).exe *.o 2>nul || echo "Đã dọn dẹp"
+	rm -f $(TARGET) $(DEMO_TARGET) $(ADVANCED_DEMO_TARGET) $(TEST_TARGET) $(MEMORY_TEST_TARGET) *.o
 
 # Hiển thị thông tin
 info:
-	@echo "=== ỨNG DỤNG DANH BẠ ĐIỆN THOẠI ==="
+	@echo "=== ỨNG DỤNG DANH BẠ ĐIỆN THOẠI (Linux) ==="
 	@echo "Tệp nguồn: $(SOURCES)"
 	@echo "Tệp demo: $(DEMO_SOURCES)"
 	@echo "Tệp advanced demo: $(ADVANCED_DEMO_SOURCES)"
 	@echo "Tệp header: $(HEADERS)"
-	@echo "Tệp thực thi: $(TARGET).exe"
-	@echo "Tệp demo: $(DEMO_TARGET).exe"
-	@echo "Tệp advanced demo: $(ADVANCED_DEMO_TARGET).exe"
+	@echo "Tệp thực thi: $(TARGET)"
+	@echo "Tệp demo: $(DEMO_TARGET)"
+	@echo "Tệp advanced demo: $(ADVANCED_DEMO_TARGET)"
 	@echo ""
 	@echo "Lệnh biên dịch: make"
 	@echo "Lệnh chạy: make run"
