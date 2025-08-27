@@ -180,7 +180,7 @@ set<Contact*> ContactManager::searchByEmail(const string& email) {
 
 void ContactManager::displayAllContacts() const {
     if (contactsByName.empty()) {
-        cout << "📭 Không có liên hệ nào trong danh bạ!" << endl;
+        cout << " Không có liên hệ nào trong danh bạ!" << endl;
         return;
     }
     
@@ -245,9 +245,7 @@ void ContactManager::addToIndexes(Contact* contact) {
     if (!contact->getPhoneNumber().empty()) {
         if (!isPhoneNumberDuplicate(contact->getPhoneNumber(), contact)) {
             contactsByPhone[contact->getPhoneNumber()] = contact;
-            cout << "  📱 Added phone '" << contact->getPhoneNumber() << "' to index" << endl;
         } else {
-            cout << "  ⚠️ Phone '" << contact->getPhoneNumber() << "' already exists in another contact, skipping..." << endl;
         }
     }
     
@@ -255,9 +253,7 @@ void ContactManager::addToIndexes(Contact* contact) {
     if (!contact->getEmail().empty()) {
         if (!isEmailDuplicate(contact->getEmail(), contact)) {
             contactsByEmail[contact->getEmail()] = contact;
-            cout << "  📧 Added email '" << contact->getEmail() << "' to index" << endl;
         } else {
-            cout << "  ⚠️ Email '" << contact->getEmail() << "' already exists in another contact, skipping..." << endl;
         }
     }
     
@@ -269,15 +265,12 @@ void ContactManager::addToIndexes(Contact* contact) {
 
 // ⚠️ QUAN TRỌNG: Hàm này để đồng bộ tất cả số điện thoại và email vào index
 void ContactManager::syncAllIndexes(Contact* contact) {
-    cout << "🔄 Syncing all indexes for contact '" << contact->getName() << "'..." << endl;
     
     // 🔑 Sync phone number với validation
     if (!contact->getPhoneNumber().empty()) {
         if (!isPhoneNumberDuplicate(contact->getPhoneNumber(), contact)) {
             contactsByPhone[contact->getPhoneNumber()] = contact;
-            cout << "  📱 Synced phone '" << contact->getPhoneNumber() << "' to index" << endl;
         } else {
-            cout << "  ⚠️ Phone '" << contact->getPhoneNumber() << "' already exists in another contact, skipping..." << endl;
         }
     }
     
@@ -285,14 +278,11 @@ void ContactManager::syncAllIndexes(Contact* contact) {
     if (!contact->getEmail().empty()) {
         if (!isEmailDuplicate(contact->getEmail(), contact)) {
             contactsByEmail[contact->getEmail()] = contact;
-            cout << "  📧 Synced email '" << contact->getEmail() << "' to index" << endl;
         } else {
-            cout << "  ⚠️ Email '" << contact->getEmail() << "' already exists in another contact, skipping..." << endl;
         }
     }
     
-    cout << "  📊 Final index sizes - Phones: " << contactsByPhone.size() 
-         << ", Emails: " << contactsByEmail.size() << endl;
+  
 }
 
 
@@ -307,9 +297,7 @@ void ContactManager::updatePhoneIndex(Contact* contact, const string& oldPhone, 
     if (!newPhone.empty()) {
         if (!isPhoneNumberDuplicate(newPhone, contact)) {
             contactsByPhone[newPhone] = contact;
-            cout << "  📱 Updated phone index: '" << newPhone << "'" << endl;
         } else {
-            cout << "  ⚠️ Phone '" << newPhone << "' already exists in another contact, skipping..." << endl;
         }
     }
 }
@@ -324,9 +312,7 @@ void ContactManager::updateEmailIndex(Contact* contact, const string& oldEmail, 
     if (!newEmail.empty()) {
         if (!isEmailDuplicate(newEmail, contact)) {
             contactsByEmail[newEmail] = contact;
-            cout << "  📧 Updated email index: '" << newEmail << "'" << endl;
         } else {
-            cout << "  ⚠️ Email '" << newEmail << "' already exists in another contact, skipping..." << endl;
         }
     }
 }

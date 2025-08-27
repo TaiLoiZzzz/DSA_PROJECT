@@ -33,13 +33,13 @@ void ContactUI::run() {
                 displayAllContacts();
                 break;
             case 5:
-                cout << "\n📊 Tổng số liên hệ: " << manager->getTotalContacts() << endl;
+                cout << "\n Tổng số liên hệ: " << manager->getTotalContacts() << endl;
                 break;
             case 6:
                 showGoodbye();
                 break;
             default:
-                cout << "❌ Lựa chọn không hợp lệ! Vui lòng thử lại." << endl;
+                cout << " Lựa chọn không hợp lệ! Vui lòng thử lại." << endl;
              
         }
         
@@ -329,9 +329,9 @@ void ContactUI::addPhoneToContact(Contact* contact) const {
         } else if (!manager->canAddPhoneNumber(phone, contact)) {
             // 🔑 Sử dụng validation mới từ ContactManager
             if (!manager->isPhoneNumberValid(phone)) {
-                cout << " ❌ Số điện thoại không hợp lệ! Chỉ được chứa số và tối đa 11 ký tự." << endl;
+                cout << "  Số điện thoại không hợp lệ! Chỉ được chứa số và tối đa 11 ký tự." << endl;
             } else if (manager->isPhoneNumberDuplicate(phone, contact)) {
-                cout << " ❌ Số điện thoại này đã tồn tại trong liên hệ khác!" << endl;
+                cout << "  Số điện thoại này đã tồn tại trong liên hệ khác!" << endl;
             }
         }
     } while (phone.empty() || !manager->canAddPhoneNumber(phone, contact));
@@ -377,9 +377,9 @@ void ContactUI::addEmailToContact(Contact* contact) const {
         } else if (!manager->canAddEmail(email, contact)) {
             // 🔑 Sử dụng validation mới từ ContactManager
             if (!manager->isValidEmail(email)) {
-                cout << " ❌ Email không hợp lệ! Vui lòng nhập lại." << endl;
+                cout << "  Email không hợp lệ! Vui lòng nhập lại." << endl;
             } else if (manager->isEmailDuplicate(email, contact)) {
-                cout << " ❌ Email này đã tồn tại trong liên hệ khác!" << endl;
+                cout << "  Email này đã tồn tại trong liên hệ khác!" << endl;
             }
         }
     } while (email.empty() || !manager->canAddEmail(email, contact));
@@ -431,7 +431,7 @@ void ContactUI::addNotesToContact(Contact* contact) const {
         contact->setNotes(notes);
         cout << "✓ Ghi chú đã được cập nhật thành công!" << endl;
     } else {
-        cout << "ℹ️ Không có thay đổi gì." << endl;
+        cout << "ℹ Không có thay đổi gì." << endl;
     }
 }
 
@@ -498,7 +498,7 @@ void ContactUI::manageEmails(Contact* contact) const {
     if (contact->hasEmail()) {
         cout << "Email hiện tại: " << contact->getEmail() << endl;
     } else {
-        cout << "📭 Chưa có email nào." << endl;
+        cout << " Chưa có email nào." << endl;
     }
     
     cout << "\n=== TÙY CHỌN ===" << endl;
