@@ -32,14 +32,14 @@ void ContactUI::run() {
             case 4:
                 displayAllContacts();
                 break;
-                    case 5:
-            cout << "\n📊 Tổng số liên hệ: " << manager->getTotalContacts() << endl;
-            break;
+            case 5:
+                cout << "\n📊 Tổng số liên hệ: " << manager->getTotalContacts() << endl;
+                break;
             case 6:
                 showGoodbye();
                 break;
-                    default:
-            cout << "❌ Lựa chọn không hợp lệ! Vui lòng thử lại." << endl;
+            default:
+                cout << "❌ Lựa chọn không hợp lệ! Vui lòng thử lại." << endl;
         }
         
         if (choice != 6) {
@@ -193,57 +193,7 @@ void ContactUI::showAddDetailsMenu(Contact* contact) const {
     } while (choice != 6);
 }
 
-void ContactUI::addContactDetails(Contact* contact) const {
-    cout << "\n=== THÊM THÔNG TIN CHI TIẾT ===" << endl;
-    
-    // Thêm số điện thoại
-    cout << "Bạn có muốn thêm số điện thoại không? (y/n): ";
-    string choice = getStringInput("");
-    if (choice == "y" || choice == "Y" || choice == "yes" || choice == "YES") {
-        string phone = getStringInput("Nhập số điện thoại: ");
-        if (!phone.empty()) {
-            contact->addPhoneNumber(phone);
-            cout << "✓ Số điện thoại đã được thêm!" << endl;
-        }
-    }
-    
-    // Thêm email
-    cout << "\nBạn có muốn thêm email không? (y/n): ";
-    choice = getStringInput("");
-    if (choice == "y" || choice == "Y" || choice == "yes" || choice == "YES") {
-        string email = getStringInput("Nhập địa chỉ email: ");
-        if (!email.empty()) {
-            contact->addEmail(email);
-            cout << "✓ Email đã được thêm!" << endl;
-        }
-    }
-    
-    // Thêm địa chỉ
-    cout << "\nBạn có muốn thêm địa chỉ không? (y/n): ";
-    choice = getStringInput("");
-    if (choice == "y" || choice == "Y" || choice == "yes" || choice == "YES") {
-        string address = getStringInput("Nhập địa chỉ: ");
-        if (!address.empty()) {
-            contact->setAddress(address);
-            cout << "✓ Địa chỉ đã được thêm!" << endl;
-        }
-    }
-    
-    // Thêm ghi chú
-    cout << "\nBạn có muốn thêm ghi chú không? (y/n): ";
-    choice = getStringInput("");
-    if (choice == "y" || choice == "Y" || choice == "yes" || choice == "YES") {
-        string notes = getStringInput("Nhập ghi chú: ");
-        if (!notes.empty()) {
-            contact->setNotes(notes);
-            cout << "✓ Ghi chú đã được thêm!" << endl;
-        }
-    }
-    
-    cout << "\n=== THÔNG TIN LIÊN HỆ HOÀN CHỈNH ===" << endl;
-    contact->display();
-    cout << "✓ Liên hệ đã được tạo hoàn chỉnh!" << endl;
-}
+
 
 void ContactUI::showEditContactMenu(Contact* contact) const {
     cout << "\n=== CHỈNH SỬA LIÊN HỆ ===" << endl;
@@ -385,6 +335,10 @@ void ContactUI::addPhoneToContact(Contact* contact) const {
     } while (phone.empty() || !isValidPhoneNumber(phone) || contact->hasPhoneNumber(phone));
     
     contact->addPhoneNumber(phone);
+    
+    // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index để đảm bảo tìm kiếm chính xác
+    manager->syncAllIndexes(contact);
+    
     cout << "✓ Số điện thoại '" << phone << "' đã được thêm thành công!" << endl;
 }
 
@@ -428,6 +382,10 @@ void ContactUI::addEmailToContact(Contact* contact) const {
     } while (email.empty() || !isValidEmail(email) || contact->hasEmail(email));
     
     contact->addEmail(email);
+    
+    // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index để đảm bảo tìm kiếm chính xác
+    manager->syncAllIndexes(contact);
+    
     cout << "✓ Email '" << email << "' đã được thêm thành công!" << endl;
 }
 
@@ -602,6 +560,10 @@ void ContactUI::deletePhoneNumber(Contact* contact) const {
     string phoneToDelete = *it;
     
     contact->removePhoneNumber(phoneToDelete);
+    
+    // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index sau khi xóa
+    manager->syncAllIndexes(contact);
+    
     cout << "✓ Đã xóa số điện thoại: " << phoneToDelete << endl;
 }
 
@@ -632,6 +594,10 @@ void ContactUI::deleteEmail(Contact* contact) const {
     string emailToDelete = *it;
     
     contact->removeEmail(emailToDelete);
+    
+    // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index sau khi xóa
+    manager->syncAllIndexes(contact);
+    
     cout << "✓ Đã xóa email: " << emailToDelete << endl;
 }
 
@@ -653,6 +619,7 @@ void ContactUI::searchContacts() const {
             return;
         default:
             cout << "❌ Lựa chọn không hợp lệ!" << endl;
+            pause();
     }
 }
 
@@ -662,6 +629,7 @@ void ContactUI::searchByName() const {
     
     set<Contact*> results = manager->searchByName(name);
     displaySearchResults(results);
+    pause();
 }
 
 void ContactUI::searchByPhone() const {
@@ -670,6 +638,7 @@ void ContactUI::searchByPhone() const {
     
     set<Contact*> results = manager->searchByPhone(phone);
     displaySearchResults(results);
+    pause();
 }
 
 void ContactUI::searchByEmail() const {
@@ -678,6 +647,7 @@ void ContactUI::searchByEmail() const {
     
     set<Contact*> results = manager->searchByEmail(email);
     displaySearchResults(results);
+    pause();
 }
 
 void ContactUI::displayAllContacts() const {

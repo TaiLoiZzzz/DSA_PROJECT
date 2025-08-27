@@ -23,6 +23,8 @@ private:
     // Helper methods
     void removeFromIndexes(Contact* contact);
     void addToIndexes(Contact* contact);
+    void updatePhoneIndex(Contact* contact, const string& oldPhone, const string& newPhone);
+    void updateEmailIndex(Contact* contact, const string& oldEmail, const string& newEmail);
     bool isValidPhone(const string& phone) const;
     bool isValidEmail(const string& email) const;
 
@@ -53,6 +55,9 @@ public:
     // Cleanup
     ~ContactManager();
     void clearAll();
+    
+    // 🔧 Debug và sửa chữa
+    void syncAllIndexes(Contact* contact);  // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index
 };
 
 #endif

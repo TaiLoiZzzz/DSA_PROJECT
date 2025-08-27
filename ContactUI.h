@@ -27,7 +27,6 @@ private:
     
     // Contact operations
     void addContact() const;
-    void addContactDetails(Contact* contact) const;
     void showAddDetailsMenu(Contact* contact) const;
     void showEditContactMenu(Contact* contact) const;
     void editContact() const;

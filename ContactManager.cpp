@@ -89,14 +89,24 @@ Contact* ContactManager::findContact(const string& name) {
 
 set<Contact*> ContactManager::searchByName(const string& name) {
     set<Contact*> results;
+    
+    // If input is empty, return empty results
+    if (name.empty()) {
+        return results;
+    }
+    
+    // Convert input to lowercase for case-insensitive search
     string lowerName = name;
     transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
     
+    // Search for partial matches in names
     for (const auto& pair : contactsByName) {
         string contactName = pair.first;
-        transform(contactName.begin(), contactName.end(), contactName.begin(), ::tolower);
+        string lowerContactName = contactName;
+        transform(lowerContactName.begin(), lowerContactName.end(), lowerContactName.begin(), ::tolower);
         
-        if (contactName.find(lowerName) != string::npos) {
+        // Check if input is found in contact name
+        if (lowerContactName.find(lowerName) != string::npos) {
             results.insert(pair.second);
         }
     }
@@ -106,19 +116,67 @@ set<Contact*> ContactManager::searchByName(const string& name) {
 
 set<Contact*> ContactManager::searchByPhone(const string& phone) {
     set<Contact*> results;
+    
+    // First try exact match (fastest)
     auto it = contactsByPhone.find(phone);
     if (it != contactsByPhone.end()) {
         results.insert(it->second);
+        return results;
     }
+    
+    // If exact match not found, try partial search
+    // Clean the input phone number (remove spaces, dashes, etc.)
+    string cleanPhone = phone;
+    cleanPhone.erase(remove_if(cleanPhone.begin(), cleanPhone.end(), 
+                              [](char c) { return !isdigit(c); }), cleanPhone.end());
+    
+    // If input is empty after cleaning, return empty results
+    if (cleanPhone.empty()) {
+        return results;
+    }
+    
+    // Debug: Print what we're searching for
+    cout << "🔍 Searching for phone: '" << phone << "' (cleaned: '" << cleanPhone << "')" << endl;
+    cout << "📱 Available phone numbers in index (" << contactsByPhone.size() << "):" << endl;
+    
+    // Search for partial matches in phone numbers
+    for (const auto& pair : contactsByPhone) {
+        string storedPhone = pair.first;
+        string cleanStoredPhone = storedPhone;
+        cleanStoredPhone.erase(remove_if(cleanStoredPhone.begin(), cleanStoredPhone.end(), 
+                                       [](char c) { return !isdigit(c); }), cleanStoredPhone.end());
+        
+        cout << "  - Stored: '" << storedPhone << "' (cleaned: '" << cleanStoredPhone << "')" << endl;
+        
+        // Check if clean input is found in clean stored phone
+        if (cleanStoredPhone.find(cleanPhone) != string::npos) {
+            cout << "  ✓ Match found!" << endl;
+            results.insert(pair.second);
+        }
+    }
+    
     return results;
 }
 
 set<Contact*> ContactManager::searchByEmail(const string& email) {
     set<Contact*> results;
-    auto it = contactsByEmail.find(email);
-    if (it != contactsByEmail.end()) {
-        results.insert(it->second);
+    
+    // Convert input to lowercase for case-insensitive search
+    string lowerEmail = email;
+    transform(lowerEmail.begin(), lowerEmail.end(), lowerEmail.begin(), ::tolower);
+    
+    // Search for partial matches in emails
+    for (const auto& pair : contactsByEmail) {
+        string storedEmail = pair.first;
+        string lowerStoredEmail = storedEmail;
+        transform(lowerStoredEmail.begin(), lowerStoredEmail.end(), lowerStoredEmail.begin(), ::tolower);
+        
+        // Check if input is found in stored email
+        if (lowerStoredEmail.find(lowerEmail) != string::npos) {
+            results.insert(pair.second);
+        }
     }
+    
     return results;
 }
 
@@ -185,14 +243,69 @@ void ContactManager::addToIndexes(Contact* contact) {
     contactsByName[contact->getName()] = contact;
     contactsById[contact->getId()] = contact;
     
+    cout << "🔧 Adding contact '" << contact->getName() << "' to indexes..." << endl;
+    
     // Add to phone index
     for (const auto& phone : contact->getPhoneNumbers()) {
         contactsByPhone[phone] = contact;
+        cout << "  📱 Added phone '" << phone << "' to index" << endl;
     }
     
     // Add to email index
     for (const auto& email : contact->getEmails()) {
         contactsByEmail[email] = contact;
+        cout << "  📧 Added email '" << email << "' to index" << endl;
+    }
+    
+    cout << "  📊 Index sizes - Names: " << contactsByName.size() 
+         << ", IDs: " << contactsById.size() 
+         << ", Phones: " << contactsByPhone.size() 
+         << ", Emails: " << contactsByEmail.size() << endl;
+}
+
+// ⚠️ QUAN TRỌNG: Hàm này để đồng bộ tất cả số điện thoại và email vào index
+void ContactManager::syncAllIndexes(Contact* contact) {
+    cout << "🔄 Syncing all indexes for contact '" << contact->getName() << "'..." << endl;
+    
+    // Sync phone numbers
+    for (const auto& phone : contact->getPhoneNumbers()) {
+        contactsByPhone[phone] = contact;
+        cout << "  📱 Synced phone '" << phone << "' to index" << endl;
+    }
+    
+    // Sync emails
+    for (const auto& email : contact->getEmails()) {
+        contactsByEmail[email] = contact;
+        cout << "  📧 Synced email '" << email << "' to index" << endl;
+    }
+    
+    cout << "  📊 Final index sizes - Phones: " << contactsByPhone.size() 
+         << ", Emails: " << contactsByEmail.size() << endl;
+}
+
+
+
+void ContactManager::updatePhoneIndex(Contact* contact, const string& oldPhone, const string& newPhone) {
+    // Remove old phone from index if it exists
+    if (!oldPhone.empty()) {
+        contactsByPhone.erase(oldPhone);
+    }
+    
+    // Add new phone to index
+    if (!newPhone.empty()) {
+        contactsByPhone[newPhone] = contact;
+    }
+}
+
+void ContactManager::updateEmailIndex(Contact* contact, const string& oldEmail, const string& newEmail) {
+    // Remove old email from index if it exists
+    if (!oldEmail.empty()) {
+        contactsByEmail.erase(oldEmail);
+    }
+    
+    // Add new email to index
+    if (!newEmail.empty()) {
+        contactsByEmail[newEmail] = contact;
     }
 }
 
