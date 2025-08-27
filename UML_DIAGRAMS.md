@@ -95,40 +95,29 @@ classDiagram
     
     class ContactException {
         -string message
-        -string errorCode
-        -string module
-        -int severity
-        
-        +ContactException(string, string, string, int)
+        +ContactException(string)
         +virtual const char* what()
-        +string getErrorCode()
-        +string getModule()
-        +int getSeverity()
-        +virtual string getFullErrorInfo()
     }
     
-    class ValidationException {
-        +ValidationException(string, string)
+    class ContactNotFound {
+        +ContactNotFound(string)
+    }
+    class ContactAlreadyExists {
+        +ContactAlreadyExists(string)
+    }
+    class InvalidInput {
+        +InvalidInput(string)
+    }
+    class EmptyInput {
+        +EmptyInput(string)
     }
     
-    class ResourceNotFoundException {
-        +ResourceNotFoundException(string, string)
-    }
-    
-    class DuplicateResourceException {
-        +DuplicateResourceException(string, string)
-    }
-    
-    class SystemException {
-        +SystemException(string)
-    }
-    
-    ContactManager ||--o{ Contact : manages
+    ContactManager o-- Contact : manages
     ContactUI --> ContactManager : uses
-    ContactException <|-- ValidationException
-    ContactException <|-- ResourceNotFoundException
-    ContactException <|-- DuplicateResourceException
-    ContactException <|-- SystemException
+    ContactException <|-- ContactNotFound
+    ContactException <|-- ContactAlreadyExists
+    ContactException <|-- InvalidInput
+    ContactException <|-- EmptyInput
     ContactManager --> ContactException : throws
 ```
 
@@ -164,18 +153,14 @@ classDiagram
     class ContactException {
         <<Exception>>
         -string message
-        -string errorCode
-        -string module
-        -int severity
     }
     
-    ContactManager "1" ||--o{ "0..*" Contact : manages
-    ContactUI "1" --> "1" ContactManager : uses
-    ContactException <|-- ValidationException : inheritance
-    ContactException <|-- ResourceNotFoundException : inheritance
-    ContactException <|-- DuplicateResourceException : inheritance
-    ContactException <|-- SystemException : inheritance
-    ContactManager --> ContactException : throws
+    "1" ContactManager o-- "0..*" Contact : manages
+    ContactUI --> ContactManager : uses
+    ContactException <|-- ContactNotFound : inheritance
+    ContactException <|-- ContactAlreadyExists : inheritance
+    ContactException <|-- InvalidInput : inheritance
+    ContactException <|-- EmptyInput : inheritance
 ```
 
 ## 2. Sequence Diagram
@@ -188,7 +173,6 @@ sequenceDiagram
     participant ContactUI
     participant ContactManager
     participant Contact
-    participant ExceptionHandler
     
     User->>ContactUI: Start Application
     ContactUI->>ContactUI: showWelcome()
@@ -212,22 +196,15 @@ sequenceDiagram
             ContactUI->>ContactUI: editContact()
             ContactUI->>ContactManager: findContact(name)
             ContactManager-->>ContactUI: Contact Object
-            ContactUI->>ContactUI: showEditContactMenu()
-            User->>ContactUI: Select Edit Option
-            ContactUI->>Contact: Update Properties
             ContactUI-->>User: Contact Updated
         else Search Contact
             ContactUI->>ContactUI: searchContacts()
-            ContactUI->>ContactUI: showSearchMenu()
-            User->>ContactUI: Select Search Type
-            ContactUI->>ContactManager: searchByType(query)
+            ContactUI->>ContactManager: searchByName/Phone/Email
             ContactManager-->>ContactUI: Search Results
             ContactUI-->>User: Display Results
         else Delete Contact
             ContactUI->>ContactUI: deleteContact()
             ContactUI->>ContactManager: removeContact(name)
-            ContactManager->>ContactManager: removeFromIndexes()
-            ContactManager->>Contact: Delete Object
             ContactManager-->>ContactUI: Success Response
             ContactUI-->>User: Contact Deleted
         end
@@ -329,58 +306,27 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    subgraph "Contact Management System"
-        subgraph "Actors"
-            User[👤 User]
-            Admin[👨‍💼 Administrator]
-            System[🖥️ System]
-        end
-        
-        subgraph "Core Use Cases"
-            UC1[➕ Add Contact]
-            UC2[✏️ Edit Contact]
-            UC3[🗑️ Delete Contact]
-            UC4[🔍 Search Contact]
-            UC5[📋 View All Contacts]
-            UC6[📊 View Statistics]
-        end
-        
-        subgraph "Advanced Use Cases"
-            UC7[📱 Manage Phone Numbers]
-            UC8[📧 Manage Emails]
-            UC9[📍 Manage Address]
-            UC10[📝 Manage Notes]
-            UC11[💾 Backup Data]
-            UC12[📥 Import/Export]
-        end
-        
-        subgraph "System Use Cases"
-            UC13[🔐 Authentication]
-            UC14[📝 Logging]
-            UC15[⚙️ Configuration]
-            UC16[🔄 Data Sync]
-        end
-    end
-    
+    %% Only real actor and use cases from code
+    User[User]
+
+    UC1[Add Contact]
+    UC2[Edit Contact]
+    UC3[Delete Contact]
+    UC4[Search Contact]
+    UC5[View All Contacts]
+    UC6[View Statistics]
+    UC7[Manage Phone Numbers]
+    UC8[Manage Emails]
+    UC9[Manage Address]
+    UC10[Manage Notes]
+
     User --> UC1
     User --> UC2
     User --> UC3
     User --> UC4
     User --> UC5
     User --> UC6
-    User --> UC7
-    User --> UC8
-    User --> UC9
-    User --> UC10
-    
-    Admin --> UC11
-    Admin --> UC12
-    Admin --> UC13
-    Admin --> UC15
-    
-    System --> UC14
-    System --> UC16
-    
+
     UC1 --> UC7
     UC1 --> UC8
     UC1 --> UC9
@@ -397,43 +343,13 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "User Interface Layer"
-        UI[ContactUI]
-        Menu[Menu System]
-        Input[Input Handler]
-        Display[Display Manager]
-    end
-    
-    subgraph "Business Logic Layer"
-        Manager[ContactManager]
-        Validator[Validation Engine]
-        Search[Search Engine]
-        Index[Index Manager]
-    end
-    
-    subgraph "Data Layer"
-        Contact[Contact Entity]
-        Storage[Data Storage]
-        Cache[Memory Cache]
-    end
-    
-    subgraph "Exception Handling"
-        Exception[Exception Handler]
-        Logger[Logging System]
-        Recovery[Recovery Manager]
-    end
-    
+    %% Only existing components/classes
+    UI[ContactUI]
+    Manager[ContactManager]
+    ContactEntity[Contact]
+
     UI --> Manager
-    UI --> Exception
-    Manager --> Contact
-    Manager --> Validator
-    Manager --> Search
-    Manager --> Index
-    Manager --> Exception
-    Contact --> Storage
-    Contact --> Cache
-    Exception --> Logger
-    Exception --> Recovery
+    Manager o-- ContactEntity
 ```
 
 ## 5. State Diagram
@@ -532,38 +448,15 @@ flowchart TD
 
 ```mermaid
 graph TB
-    subgraph "Contact Management System"
-        subgraph "UI Package"
-            ContactUI
-            MenuSystem
-            InputHandler
-            DisplayManager
-        end
-        
-        subgraph "Core Package"
-            ContactManager
-            Contact
-            ContactException
-        end
-        
-        subgraph "Exception Package"
-            ValidationException
-            ResourceNotFoundException
-            DuplicateResourceException
-            SystemException
-        end
-        
-        subgraph "Utility Package"
-            Logger
-            Validator
-            IndexManager
-        end
+    %% Package diagram with valid IDs
+    subgraph System
+        UIPkg["UI Package"]
+        CorePkg["Core Package"]
+        ExPkg["Exception Package"]
     end
-    
-    UI Package --> Core Package
-    Core Package --> Exception Package
-    Core Package --> Utility Package
-    Exception Package --> Utility Package
+
+    UIPkg --> CorePkg
+    CorePkg --> ExPkg
 ```
 
 ## 8. Object Diagram
@@ -611,32 +504,10 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "Development Environment"
-        Dev[Development Machine]
-        Dev --> DevUI[ContactUI.exe]
-        Dev --> DevData[Local Data]
-    end
-    
-    subgraph "Production Environment"
-        Prod[Production Server]
-        Prod --> ProdUI[ContactUI.exe]
-        Prod --> ProdData[Persistent Storage]
-        Prod --> ProdLog[Log Files]
-    end
-    
-    subgraph "User Machines"
-        User1[User 1 PC]
-        User2[User 2 PC]
-        User3[User 3 PC]
-    end
-    
-    DevUI --> DevData
-    ProdUI --> ProdData
-    ProdUI --> ProdLog
-    
-    User1 --> Prod
-    User2 --> Prod
-    User3 --> Prod
+    App[ContactUI.exe]
+    DataMemory[In-memory Data]
+
+    App --- DataMemory
 ```
 
 ## 10. Timing Diagram
