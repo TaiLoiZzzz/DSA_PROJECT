@@ -8,12 +8,16 @@ int Contact::nextId = 1;
 
 Contact::Contact() : id(nextId++) {
     name = "";
+    phoneNumber = "";
+    email = "";
     address = "";
     notes = "";
 }
 
 Contact::Contact(const string& name) : id(nextId++) {
     this->name = name;
+    phoneNumber = "";
+    email = "";
     address = "";
     notes = "";
 }
@@ -26,12 +30,12 @@ string Contact::getName() const {
     return name;
 }
 
-set<string> Contact::getPhoneNumbers() const {
-    return phoneNumbers;
+string Contact::getPhoneNumber() const {
+    return phoneNumber;
 }
 
-set<string> Contact::getEmails() const {
-    return emails;
+string Contact::getEmail() const {
+    return email;
 }
 
 string Contact::getAddress() const {
@@ -54,48 +58,32 @@ void Contact::setNotes(const string& notes) {
     this->notes = notes;
 }
 
-void Contact::addPhoneNumber(const string& phone) {
-    phoneNumbers.insert(phone);
+void Contact::setPhoneNumber(const string& phone) {
+    phoneNumber = phone;  // 🔑 Thay thế số điện thoại cũ
 }
 
-void Contact::removePhoneNumber(const string& phone) {
-    phoneNumbers.erase(phone);
+void Contact::setEmail(const string& email) {
+    this->email = email;  // 🔑 Thay thế email cũ
 }
 
-void Contact::addEmail(const string& email) {
-    emails.insert(email);
+bool Contact::hasPhoneNumber() const {
+    return !phoneNumber.empty();  // 🔑 Kiểm tra có số điện thoại không
 }
 
-void Contact::removeEmail(const string& email) {
-    emails.erase(email);
-}
-
-bool Contact::hasPhoneNumber(const string& phone) const {
-    return phoneNumbers.find(phone) != phoneNumbers.end();
-}
-
-bool Contact::hasEmail(const string& email) const {
-    return emails.find(email) != emails.end();
+bool Contact::hasEmail() const {
+    return !email.empty();  // 🔑 Kiểm tra có email không
 }
 
 void Contact::display() const {
     cout << "\n=== Liên hệ ID: " << id << " ===" << endl;
     cout << "Tên: " << name << endl;
     
-    if (!phoneNumbers.empty()) {
-        cout << "Số điện thoại: ";
-        for (const auto& phone : phoneNumbers) {
-            cout << phone << " ";
-        }
-        cout << endl;
+    if (!phoneNumber.empty()) {
+        cout << "Số điện thoại: " << phoneNumber << endl;
     }
     
-    if (!emails.empty()) {
-        cout << "Email: ";
-        for (const auto& email : emails) {
-            cout << email << " ";
-        }
-        cout << endl;
+    if (!email.empty()) {
+        cout << "Email: " << email << endl;
     }
     
     if (!address.empty()) {

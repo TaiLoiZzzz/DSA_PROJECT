@@ -25,8 +25,6 @@ private:
     void addToIndexes(Contact* contact);
     void updatePhoneIndex(Contact* contact, const string& oldPhone, const string& newPhone);
     void updateEmailIndex(Contact* contact, const string& oldEmail, const string& newEmail);
-    bool isValidPhone(const string& phone) const;
-    bool isValidEmail(const string& email) const;
 
 public:
     static ContactManager* getInstance();
@@ -58,6 +56,17 @@ public:
     
     // 🔧 Debug và sửa chữa
     void syncAllIndexes(Contact* contact);  // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index
+    
+    // 🔑 Public validation methods
+    bool canAddPhoneNumber(const string& phone, Contact* excludeContact = nullptr) const;
+    bool canAddEmail(const string& email, Contact* excludeContact = nullptr) const;
+    
+    // 🔑 Validation methods for duplicate checking
+    bool isPhoneNumberDuplicate(const string& phone, Contact* excludeContact = nullptr) const;
+    bool isEmailDuplicate(const string& email, Contact* excludeContact = nullptr) const;
+    bool isPhoneNumberValid(const string& phone) const;  // Check length and format
+    bool isValidPhone(const string& phone) const;
+    bool isValidEmail(const string& email) const;
 };
 
 #endif

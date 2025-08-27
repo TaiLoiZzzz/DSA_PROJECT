@@ -29,10 +29,10 @@ bool ContactManager::addContact(const string& name) {
         Contact* newContact = new Contact(name);
         addToIndexes(newContact);
         
-        cout << "✓ Liên hệ '" << name << "' đã được thêm thành công với ID: " << newContact->getId() << endl;
+        cout << " Liên hệ '" << name << "' đã được thêm thành công với ID: " << newContact->getId() << endl;
         return true;
     } catch (const ContactException& e) {
-        cout << "❌ Lỗi: " << e.what() << endl;
+        cout << " Lỗi: " << e.what() << endl;
         return false;
     }
 }
@@ -49,10 +49,10 @@ bool ContactManager::removeContact(int id) {
         removeFromIndexes(contact);
         delete contact;
         
-        cout << "✓ Liên hệ '" << name << "' (ID: " << id << ") đã được xóa thành công!" << endl;
+        cout << " Liên hệ '" << name << "' (ID: " << id << ") đã được xóa thành công!" << endl;
         return true;
     } catch (const ContactException& e) {
-        cout << "❌ Lỗi: " << e.what() << endl;
+        cout << " Lỗi: " << e.what() << endl;
         return false;
     }
 }
@@ -69,10 +69,10 @@ bool ContactManager::removeContact(const string& name) {
         removeFromIndexes(contact);
         delete contact;
         
-        cout << "✓ Liên hệ '" << name << "' (ID: " << id << ") đã được xóa thành công!" << endl;
+        cout << " Liên hệ '" << name << "' (ID: " << id << ") đã được xóa thành công!" << endl;
         return true;
     } catch (const ContactException& e) {
-        cout << "❌ Lỗi: " << e.what() << endl;
+        cout << "Lỗi: " << e.what() << endl;
         return false;
     }
 }
@@ -136,8 +136,7 @@ set<Contact*> ContactManager::searchByPhone(const string& phone) {
     }
     
     // Debug: Print what we're searching for
-    cout << "🔍 Searching for phone: '" << phone << "' (cleaned: '" << cleanPhone << "')" << endl;
-    cout << "📱 Available phone numbers in index (" << contactsByPhone.size() << "):" << endl;
+ 
     
     // Search for partial matches in phone numbers
     for (const auto& pair : contactsByPhone) {
@@ -146,7 +145,6 @@ set<Contact*> ContactManager::searchByPhone(const string& phone) {
         cleanStoredPhone.erase(remove_if(cleanStoredPhone.begin(), cleanStoredPhone.end(), 
                                        [](char c) { return !isdigit(c); }), cleanStoredPhone.end());
         
-        cout << "  - Stored: '" << storedPhone << "' (cleaned: '" << cleanStoredPhone << "')" << endl;
         
         // Check if clean input is found in clean stored phone
         if (cleanStoredPhone.find(cleanPhone) != string::npos) {
@@ -200,7 +198,7 @@ void ContactManager::displayContact(int id) const {
         }
         it->second->display();
     } catch (const ContactException& e) {
-        cout << "❌ Lỗi: " << e.what() << endl;
+        cout << "Lỗi: " << e.what() << endl;
     }
 }
 
@@ -212,7 +210,7 @@ void ContactManager::displayContact(const string& name) const {
         }
         it->second->display();
     } catch (const ContactException& e) {
-        cout << "❌ Lỗi: " << e.what() << endl;
+        cout << " Lỗi: " << e.what() << endl;
     }
 }
 
@@ -229,13 +227,13 @@ void ContactManager::removeFromIndexes(Contact* contact) {
     contactsById.erase(contact->getId());
     
     // Remove from phone index
-    for (const auto& phone : contact->getPhoneNumbers()) {
-        contactsByPhone.erase(phone);
+    if (!contact->getPhoneNumber().empty()) {
+        contactsByPhone.erase(contact->getPhoneNumber());
     }
     
     // Remove from email index
-    for (const auto& email : contact->getEmails()) {
-        contactsByEmail.erase(email);
+    if (!contact->getEmail().empty()) {
+        contactsByEmail.erase(contact->getEmail());
     }
 }
 
@@ -243,18 +241,24 @@ void ContactManager::addToIndexes(Contact* contact) {
     contactsByName[contact->getName()] = contact;
     contactsById[contact->getId()] = contact;
     
-    cout << "🔧 Adding contact '" << contact->getName() << "' to indexes..." << endl;
-    
-    // Add to phone index
-    for (const auto& phone : contact->getPhoneNumbers()) {
-        contactsByPhone[phone] = contact;
-        cout << "  📱 Added phone '" << phone << "' to index" << endl;
+    // 🔑 Thêm số điện thoại vào index với validation
+    if (!contact->getPhoneNumber().empty()) {
+        if (!isPhoneNumberDuplicate(contact->getPhoneNumber(), contact)) {
+            contactsByPhone[contact->getPhoneNumber()] = contact;
+            cout << "  📱 Added phone '" << contact->getPhoneNumber() << "' to index" << endl;
+        } else {
+            cout << "  ⚠️ Phone '" << contact->getPhoneNumber() << "' already exists in another contact, skipping..." << endl;
+        }
     }
     
-    // Add to email index
-    for (const auto& email : contact->getEmails()) {
-        contactsByEmail[email] = contact;
-        cout << "  📧 Added email '" << email << "' to index" << endl;
+    // 🔑 Thêm email vào index với validation
+    if (!contact->getEmail().empty()) {
+        if (!isEmailDuplicate(contact->getEmail(), contact)) {
+            contactsByEmail[contact->getEmail()] = contact;
+            cout << "  📧 Added email '" << contact->getEmail() << "' to index" << endl;
+        } else {
+            cout << "  ⚠️ Email '" << contact->getEmail() << "' already exists in another contact, skipping..." << endl;
+        }
     }
     
     cout << "  📊 Index sizes - Names: " << contactsByName.size() 
@@ -267,16 +271,24 @@ void ContactManager::addToIndexes(Contact* contact) {
 void ContactManager::syncAllIndexes(Contact* contact) {
     cout << "🔄 Syncing all indexes for contact '" << contact->getName() << "'..." << endl;
     
-    // Sync phone numbers
-    for (const auto& phone : contact->getPhoneNumbers()) {
-        contactsByPhone[phone] = contact;
-        cout << "  📱 Synced phone '" << phone << "' to index" << endl;
+    // 🔑 Sync phone number với validation
+    if (!contact->getPhoneNumber().empty()) {
+        if (!isPhoneNumberDuplicate(contact->getPhoneNumber(), contact)) {
+            contactsByPhone[contact->getPhoneNumber()] = contact;
+            cout << "  📱 Synced phone '" << contact->getPhoneNumber() << "' to index" << endl;
+        } else {
+            cout << "  ⚠️ Phone '" << contact->getPhoneNumber() << "' already exists in another contact, skipping..." << endl;
+        }
     }
     
-    // Sync emails
-    for (const auto& email : contact->getEmails()) {
-        contactsByEmail[email] = contact;
-        cout << "  📧 Synced email '" << email << "' to index" << endl;
+    // 🔑 Sync email với validation
+    if (!contact->getEmail().empty()) {
+        if (!isEmailDuplicate(contact->getEmail(), contact)) {
+            contactsByEmail[contact->getEmail()] = contact;
+            cout << "  📧 Synced email '" << contact->getEmail() << "' to index" << endl;
+        } else {
+            cout << "  ⚠️ Email '" << contact->getEmail() << "' already exists in another contact, skipping..." << endl;
+        }
     }
     
     cout << "  📊 Final index sizes - Phones: " << contactsByPhone.size() 
@@ -291,9 +303,14 @@ void ContactManager::updatePhoneIndex(Contact* contact, const string& oldPhone, 
         contactsByPhone.erase(oldPhone);
     }
     
-    // Add new phone to index
+    // 🔑 Add new phone to index với validation
     if (!newPhone.empty()) {
-        contactsByPhone[newPhone] = contact;
+        if (!isPhoneNumberDuplicate(newPhone, contact)) {
+            contactsByPhone[newPhone] = contact;
+            cout << "  📱 Updated phone index: '" << newPhone << "'" << endl;
+        } else {
+            cout << "  ⚠️ Phone '" << newPhone << "' already exists in another contact, skipping..." << endl;
+        }
     }
 }
 
@@ -303,20 +320,109 @@ void ContactManager::updateEmailIndex(Contact* contact, const string& oldEmail, 
         contactsByEmail.erase(oldEmail);
     }
     
-    // Add new email to index
+    // 🔑 Add new email to index với validation
     if (!newEmail.empty()) {
-        contactsByEmail[newEmail] = contact;
+        if (!isEmailDuplicate(newEmail, contact)) {
+            contactsByEmail[newEmail] = contact;
+            cout << "  📧 Updated email index: '" << newEmail << "'" << endl;
+        } else {
+            cout << "  ⚠️ Email '" << newEmail << "' already exists in another contact, skipping..." << endl;
+        }
     }
 }
 
 bool ContactManager::isValidPhone(const string& phone) const {
-    regex phonePattern(R"(\d{10,15})");
-    return regex_match(phone, phonePattern);
+    // 🔑 Sử dụng validation mới (tối đa 11 số)
+    return isPhoneNumberValid(phone);
 }
 
 bool ContactManager::isValidEmail(const string& email) const {
     regex emailPattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
     return regex_match(email, emailPattern);
+}
+
+// 🔑 Kiểm tra số điện thoại có bị trùng lặp với liên hệ khác không
+bool ContactManager::isPhoneNumberDuplicate(const string& phone, Contact* excludeContact) const {
+    auto it = contactsByPhone.find(phone);
+    if (it == contactsByPhone.end()) {
+        return false;  // Không tìm thấy -> không trùng lặp
+    }
+    
+    // Nếu tìm thấy, kiểm tra có phải liên hệ khác không
+    Contact* existingContact = it->second;
+    if (excludeContact && existingContact == excludeContact) {
+        return false;  // Cùng một liên hệ -> không trùng lặp
+    }
+    
+    return true;  // Trùng lặp với liên hệ khác
+}
+
+// 🔑 Kiểm tra email có bị trùng lặp với liên hệ khác không
+bool ContactManager::isEmailDuplicate(const string& email, Contact* excludeContact) const {
+    auto it = contactsByEmail.find(email);
+    if (it == contactsByEmail.end()) {
+        return false;  // Không tìm thấy -> không trùng lặp
+    }
+    
+    // Nếu tìm thấy, kiểm tra có phải liên hệ khác không
+    Contact* existingContact = it->second;
+    if (excludeContact && existingContact == excludeContact) {
+        return false;  // Cùng một liên hệ -> không trùng lặp
+    }
+    
+    return true;  // Trùng lặp với liên hệ khác
+}
+
+// 🔑 Public method để kiểm tra có thể thêm số điện thoại không
+bool ContactManager::canAddPhoneNumber(const string& phone, Contact* excludeContact) const {
+    // Kiểm tra format và độ dài
+    if (!isPhoneNumberValid(phone)) {
+        return false;
+    }
+    
+    // Kiểm tra trùng lặp
+    if (isPhoneNumberDuplicate(phone, excludeContact)) {
+        return false;
+    }
+    
+    return true;
+}
+
+// 🔑 Public method để kiểm tra có thể thêm email không
+bool ContactManager::canAddEmail(const string& email, Contact* excludeContact) const {
+    // Kiểm tra format email
+    if (!isValidEmail(email)) {
+        return false;
+    }
+    
+    // Kiểm tra trùng lặp
+    if (isEmailDuplicate(email, excludeContact)) {
+        return false;
+    }
+    
+    return true;
+}
+
+// 🔑 Kiểm tra format và độ dài số điện thoại (tối đa 11 số)
+bool ContactManager::isPhoneNumberValid(const string& phone) const {
+    // Kiểm tra không rỗng
+    if (phone.empty()) {
+        return false;
+    }
+    
+    // Kiểm tra độ dài tối đa 11 số
+    if (phone.length() > 11) {
+        return false;
+    }
+    
+    // Kiểm tra tất cả ký tự đều là số
+    for (char c : phone) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 ContactManager::~ContactManager() {
