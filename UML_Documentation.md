@@ -451,7 +451,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[Nhập dữ liệu] --> B{Kiểm tra rỗng}
-    B --> C[Hiển thị lỗi "Không được để trống"]
+    B --> C[Hiển thị lỗi: Không được để trống]
     B --> D{Kiểm tra loại dữ liệu}
     
     D --> E{Độ dài >= 2 ký tự}
@@ -459,25 +459,25 @@ flowchart TD
     D --> G{Kiểm tra format email}
     D --> H{Độ dài >= 5 ký tự}
     
-    E --> I[Hiển thị lỗi "Tên phải >= 2 ký tự"]
+    E --> I[Hiển thị lỗi: Tên phải >= 2 ký tự]
     E --> J[Kiểm tra trùng lặp]
     
-    F --> K[Hiển thị lỗi "Số điện thoại không hợp lệ"]
+    F --> K[Hiển thị lỗi: Số điện thoại không hợp lệ]
     F --> L[Kiểm tra trùng lặp]
     
-    G --> M[Hiển thị lỗi "Email không hợp lệ"]
+    G --> M[Hiển thị lỗi: Email không hợp lệ]
     G --> N[Kiểm tra trùng lặp]
     
-    H --> O[Hiển thị lỗi "Địa chỉ phải >= 5 ký tự"]
+    H --> O[Hiển thị lỗi: Địa chỉ phải >= 5 ký tự]
     H --> P[Dữ liệu hợp lệ]
     
-    J --> Q[Hiển thị lỗi "Đã tồn tại"]
+    J --> Q[Hiển thị lỗi: Đã tồn tại]
     J --> P
     
-    L --> R[Hiển thị lỗi "Số điện thoại đã tồn tại"]
+    L --> R[Hiển thị lỗi: Số điện thoại đã tồn tại]
     L --> P
     
-    N --> S[Hiển thị lỗi "Email đã tồn tại"]
+    N --> S[Hiển thị lỗi: Email đã tồn tại]
     N --> P
     
     C --> T[Yêu cầu nhập lại]
@@ -675,7 +675,7 @@ graph TD
     H --> I
     
     I -->|Có| J[Hiển thị kết quả]
-    I -->|Không| K[Hiển thị "Không tìm thấy"]
+    I -->|Không| K[Hiển thị: Không tìm thấy]
     
     J --> L[Kết thúc]
     K --> L
