@@ -1,0 +1,98 @@
+# Makefile cho ứng dụng Danh Bạ Điện Thoại (Cấu trúc thư mục mới)
+# Sử dụng g++ compiler
+
+# Biến
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic
+INCLUDES = -I../include
+
+# Đường dẫn
+SRC_DIR = ../src
+BUILD_DIR = .
+BIN_DIR = ../bin
+
+# Tên file
+TARGET = phonebook
+DEMO_TARGET = exception_demo
+ADVANCED_DEMO_TARGET = advanced_demo
+
+# Source files
+SOURCES = $(SRC_DIR)/main_linux.cpp
+DEMO_SOURCES = $(SRC_DIR)/ExceptionDemo.cpp
+ADVANCED_DEMO_SOURCES = $(SRC_DIR)/AdvancedDemo.cpp
+
+# Header files
+HEADERS = $(wildcard ../include/*.h)
+
+# Object files
+OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+DEMO_OBJECTS = $(DEMO_SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+ADVANCED_OBJECTS = $(ADVANCED_DEMO_SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+
+# Mục tiêu mặc định
+all: $(TARGET)
+
+# Tạo thư mục bin nếu chưa có
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+# Biên dịch chương trình chính
+$(TARGET): $(OBJECTS) $(HEADERS) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(BIN_DIR)/$(TARGET) $(OBJECTS)
+
+# Biên dịch demo exception
+$(DEMO_TARGET): $(DEMO_OBJECTS) $(HEADERS) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(BIN_DIR)/$(DEMO_TARGET) $(DEMO_OBJECTS)
+
+# Biên dịch advanced demo
+$(ADVANCED_DEMO_TARGET): $(ADVANCED_OBJECTS) $(HEADERS) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(BIN_DIR)/$(ADVANCED_DEMO_TARGET) $(ADVANCED_OBJECTS)
+
+# Compile object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+# Chạy chương trình
+run: $(TARGET)
+	$(BIN_DIR)/$(TARGET)
+
+# Chạy demo
+demo: $(DEMO_TARGET)
+	$(BIN_DIR)/$(DEMO_TARGET)
+
+# Chạy advanced demo
+advanced: $(ADVANCED_DEMO_TARGET)
+	$(BIN_DIR)/$(ADVANCED_DEMO_TARGET)
+
+# Dọn dẹp
+clean:
+	rm -f $(BUILD_DIR)/*.o $(BIN_DIR)/$(TARGET) $(BIN_DIR)/$(DEMO_TARGET) $(BIN_DIR)/$(ADVANCED_DEMO_TARGET)
+
+# Hiển thị thông tin
+info:
+	@echo "=== ỨNG DỤNG DANH BẠ ĐIỆN THOẠI (Cấu trúc mới) ==="
+	@echo "Thư mục source: $(SRC_DIR)"
+	@echo "Thư mục include: ../include"
+	@echo "Thư mục build: $(BUILD_DIR)"
+	@echo "Thư mục bin: $(BIN_DIR)"
+	@echo "Tệp nguồn: $(SOURCES)"
+	@echo "Tệp header: $(HEADERS)"
+	@echo "Tệp thực thi: $(BIN_DIR)/$(TARGET)"
+	@echo ""
+	@echo "Lệnh biên dịch: make"
+	@echo "Lệnh chạy: make run"
+	@echo "Lệnh demo: make demo"
+	@echo "Lệnh dọn dẹp: make clean"
+
+# Trợ giúp
+help:
+	@echo "Các lệnh có sẵn:"
+	@echo "  make      - Biên dịch chương trình"
+	@echo "  make run  - Chạy chương trình"
+	@echo "  make demo - Chạy demo exception"
+	@echo "  make advanced - Chạy advanced demo"
+	@echo "  make clean- Dọn dẹp file build"
+	@echo "  make info - Hiển thị thông tin"
+	@echo "  make help - Hiển thị trợ giúp"
+
+.PHONY: all run demo advanced clean info help
