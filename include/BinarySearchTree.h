@@ -29,12 +29,10 @@ private:
     void clearRecursive(Node* node);
     void printRecursive(Node* node, int depth) const;
     
-    // 🔥 NEW: Tree traversal methods without vector - sử dụng std::function
     void inorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const;
     void preorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const;
     void postorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const;
     
-    // 🔥 NEW: Search methods without vector - sử dụng std::function
     void searchPartialCallback(Node* node, const K& partialKey, 
                               const std::function<bool(const K&, const K&)>& matchFunc,
                               const std::function<void(const K&, const V&)>& callback) const;
@@ -60,23 +58,19 @@ public:
     // Debug
     void print() const;
     
-    // 🔥 NEW: Traversal methods with std::function (no vector)
     void traverseInorder(const std::function<void(const K&, const V&)>& callback) const;
     void traversePreorder(const std::function<void(const K&, const V&)>& callback) const;
     void traversePostorder(const std::function<void(const K&, const V&)>& callback) const;
     
-    // 🔥 NEW: Search methods with std::function (no vector)
     void searchPartial(const K& partialKey, 
                       const std::function<bool(const K&, const K&)>& matchFunc,
                       const std::function<void(const K&, const V&)>& callback) const;
     void searchRange(const K& startKey, const K& endKey, 
                     const std::function<void(const K&, const V&)>& callback) const;
     
-    // 🔥 NEW: Iterator-like functionality without vector
     void forEach(const std::function<void(const K&, const V&)>& callback) const;
     void forEachReverse(const std::function<void(const K&, const V&)>& callback) const;
     
-    // 🔥 NEW: Tree statistics without vector
     int getHeight() const;
     int getHeightRecursive(Node* node) const;
     int getNodeCount() const { return size_; }
@@ -203,7 +197,6 @@ bool BinarySearchTree<K, V>::remove(const K& key) {
     return true;
 }
 
-// 🔥 NEW: Traversal methods with std::function (no vector)
 template<typename K, typename V>
 void BinarySearchTree<K, V>::inorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const {
     if (node) {
@@ -246,7 +239,6 @@ void BinarySearchTree<K, V>::traversePostorder(const std::function<void(const K&
     postorderTraversalCallback(root, callback);
 }
 
-// 🔥 NEW: Search methods with std::function (no vector)
 template<typename K, typename V>
 void BinarySearchTree<K, V>::searchPartialCallback(Node* node, const K& partialKey, 
                                                   const std::function<bool(const K&, const K&)>& matchFunc,
@@ -296,7 +288,6 @@ void BinarySearchTree<K, V>::searchRange(const K& startKey, const K& endKey, con
     searchRangeCallback(root, startKey, endKey, callback);
 }
 
-// 🔥 NEW: Iterator-like functionality without vector
 template<typename K, typename V>
 void BinarySearchTree<K, V>::forEach(const std::function<void(const K&, const V&)>& callback) const {
     traverseInorder(callback);
@@ -332,7 +323,6 @@ void BinarySearchTree<K, V>::forEachReverse(const std::function<void(const K&, c
     }
 }
 
-// 🔥 NEW: Tree statistics without vector
 template<typename K, typename V>
 int BinarySearchTree<K, V>::getHeightRecursive(Node* node) const {
     if (node == nullptr) {
