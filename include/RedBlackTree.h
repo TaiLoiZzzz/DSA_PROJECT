@@ -2,8 +2,8 @@
 #define RED_BLACK_TREE_H
 
 #include <iostream>
-#include <vector>
 #include <string>
+#include <functional>  // 🔥 Thêm để hỗ trợ std::function
 
 template<typename K, typename V>
 class RedBlackTree {
@@ -33,10 +33,20 @@ private:
     void deleteFixup(Node* x);
     void transplant(Node* u, Node* v);
     Node* findRecursive(Node* node, const K& key) const;
-    void inorderTraversal(Node* node, std::vector<V>& result) const;
     void clearRecursive(Node* node);
     void printRecursive(Node* node, int depth) const;
-    void getAllPairsRecursive(Node* node, std::vector<std::pair<K, V>>& result) const;
+    
+    // 🔥 NEW: Tree traversal methods without vector - sử dụng std::function
+    void inorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const;
+    void preorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const;
+    void postorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const;
+    
+    // 🔥 NEW: Search methods without vector - sử dụng std::function
+    void searchPartialCallback(Node* node, const K& partialKey, 
+                              const std::function<bool(const K&, const K&)>& matchFunc,
+                              const std::function<void(const K&, const V&)>& callback) const;
+    void searchRangeCallback(Node* node, const K& startKey, const K& endKey, 
+                           const std::function<void(const K&, const V&)>& callback) const;
     
 public:
     RedBlackTree() : size_(0) {
@@ -61,13 +71,32 @@ public:
     size_t size() const { return size_; }
     bool empty() const { return size_ == 0; }
     void clear();
-    std::vector<V> getAllValues() const;
     
     // Debug
     void print() const;
     
-    // Iterator-like functionality
-    std::vector<std::pair<K, V>> getAllPairs() const;
+    // 🔥 NEW: Traversal methods with std::function (no vector)
+    void traverseInorder(const std::function<void(const K&, const V&)>& callback) const;
+    void traversePreorder(const std::function<void(const K&, const V&)>& callback) const;
+    void traversePostorder(const std::function<void(const K&, const V&)>& callback) const;
+    
+    // 🔥 NEW: Search methods with std::function (no vector)
+    void searchPartial(const K& partialKey, 
+                      const std::function<bool(const K&, const K&)>& matchFunc,
+                      const std::function<void(const K&, const V&)>& callback) const;
+    void searchRange(const K& startKey, const K& endKey, 
+                    const std::function<void(const K&, const V&)>& callback) const;
+    
+    // 🔥 NEW: Iterator-like functionality without vector
+    void forEach(const std::function<void(const K&, const V&)>& callback) const;
+    void forEachReverse(const std::function<void(const K&, const V&)>& callback) const;
+    
+    // 🔥 NEW: Tree statistics without vector
+    int getHeight() const;
+    int getHeightRecursive(Node* node) const;
+    int getNodeCount() const { return size_; }
+    bool isBalanced() const;
+    bool isBalancedRecursive(Node* node, int& height) const;
 };
 
 // Implementation
@@ -356,35 +385,64 @@ bool RedBlackTree<K, V>::remove(const K& key) {
 }
 
 template<typename K, typename V>
-void RedBlackTree<K, V>::inorderTraversal(Node* node, std::vector<V>& result) const {
+void RedBlackTree<K, V>::inorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const {
     if (node != nil) {
-        inorderTraversal(node->left, result);
-        result.push_back(node->value);
-        inorderTraversal(node->right, result);
+        inorderTraversalCallback(node->left, callback);
+        callback(node->key, node->value);
+        inorderTraversalCallback(node->right, callback);
     }
 }
 
 template<typename K, typename V>
-std::vector<V> RedBlackTree<K, V>::getAllValues() const {
-    std::vector<V> result;
-    inorderTraversal(root, result);
-    return result;
-}
-
-template<typename K, typename V>
-void RedBlackTree<K, V>::getAllPairsRecursive(Node* node, std::vector<std::pair<K, V>>& result) const {
+void RedBlackTree<K, V>::preorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const {
     if (node != nil) {
-        getAllPairsRecursive(node->left, result);
-        result.push_back(std::make_pair(node->key, node->value));
-        getAllPairsRecursive(node->right, result);
+        callback(node->key, node->value);
+        preorderTraversalCallback(node->left, callback);
+        preorderTraversalCallback(node->right, callback);
     }
 }
 
 template<typename K, typename V>
-std::vector<std::pair<K, V>> RedBlackTree<K, V>::getAllPairs() const {
-    std::vector<std::pair<K, V>> result;
-    getAllPairsRecursive(root, result);
-    return result;
+void RedBlackTree<K, V>::postorderTraversalCallback(Node* node, const std::function<void(const K&, const V&)>& callback) const {
+    if (node != nil) {
+        postorderTraversalCallback(node->left, callback);
+        postorderTraversalCallback(node->right, callback);
+        callback(node->key, node->value);
+    }
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::searchPartialCallback(Node* node, const K& partialKey, 
+                              const std::function<bool(const K&, const K&)>& matchFunc,
+                              const std::function<void(const K&, const V&)>& callback) const {
+    if (node != nil) {
+        if (matchFunc(node->key, partialKey)) {
+            callback(node->key, node->value);
+        }
+        searchPartialCallback(node->left, partialKey, matchFunc, callback);
+        searchPartialCallback(node->right, partialKey, matchFunc, callback);
+    }
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::searchRangeCallback(Node* node, const K& startKey, const K& endKey, 
+                           const std::function<void(const K&, const V&)>& callback) const {
+    if (node != nil) {
+        // If current node is within range, add it
+        if (node->key >= startKey && node->key <= endKey) {
+            callback(node->key, node->value);
+        }
+        
+        // If current key is greater than start, search left subtree
+        if (node->key > startKey) {
+            searchRangeCallback(node->left, startKey, endKey, callback);
+        }
+        
+        // If current key is less than end, search right subtree
+        if (node->key < endKey) {
+            searchRangeCallback(node->right, startKey, endKey, callback);
+        }
+    }
 }
 
 template<typename K, typename V>
@@ -420,6 +478,79 @@ template<typename K, typename V>
 void RedBlackTree<K, V>::print() const {
     std::cout << "Red-Black Tree (size: " << size_ << "):" << std::endl;
     printRecursive(root, 0);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::traverseInorder(const std::function<void(const K&, const V&)>& callback) const {
+    inorderTraversalCallback(root, callback);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::traversePreorder(const std::function<void(const K&, const V&)>& callback) const {
+    preorderTraversalCallback(root, callback);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::traversePostorder(const std::function<void(const K&, const V&)>& callback) const {
+    postorderTraversalCallback(root, callback);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::searchPartial(const K& partialKey, 
+                      const std::function<bool(const K&, const K&)>& matchFunc,
+                      const std::function<void(const K&, const V&)>& callback) const {
+    searchPartialCallback(root, partialKey, matchFunc, callback);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::searchRange(const K& startKey, const K& endKey, 
+                    const std::function<void(const K&, const V&)>& callback) const {
+    searchRangeCallback(root, startKey, endKey, callback);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::forEach(const std::function<void(const K&, const V&)>& callback) const {
+    traverseInorder(callback);
+}
+
+template<typename K, typename V>
+void RedBlackTree<K, V>::forEachReverse(const std::function<void(const K&, const V&)>& callback) const {
+    traversePostorder(callback);
+}
+
+template<typename K, typename V>
+int RedBlackTree<K, V>::getHeight() const {
+    return getHeightRecursive(root);
+}
+
+template<typename K, typename V>
+int RedBlackTree<K, V>::getHeightRecursive(Node* node) const {
+    if (node == nil) {
+        return 0;
+    }
+    int leftHeight = getHeightRecursive(node->left);
+    int rightHeight = getHeightRecursive(node->right);
+    return 1 + std::max(leftHeight, rightHeight);
+}
+
+template<typename K, typename V>
+bool RedBlackTree<K, V>::isBalanced() const {
+    int height;
+    return isBalancedRecursive(root, height);
+}
+
+template<typename K, typename V>
+bool RedBlackTree<K, V>::isBalancedRecursive(Node* node, int& height) const {
+    if (node == nil) {
+        height = 0;
+        return true;
+    }
+    int leftHeight, rightHeight;
+    if (!isBalancedRecursive(node->left, leftHeight) || !isBalancedRecursive(node->right, rightHeight)) {
+        return false;
+    }
+    height = 1 + std::max(leftHeight, rightHeight);
+    return std::abs(leftHeight - rightHeight) <= 1;
 }
 
 #endif // RED_BLACK_TREE_H

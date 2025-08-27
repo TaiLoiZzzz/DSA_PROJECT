@@ -99,18 +99,24 @@ set<Contact*> ContactManager::searchByName(const string& name) {
     string lowerName = name;
     transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
     
-    // Search for partial matches in names using tree traversal
-    vector<pair<string, Contact*>> allPairs = contactsByName.getAllPairs();
-    for (const auto& pair : allPairs) {
-        string contactName = pair.first;
+    auto searchCallback = [&results, &lowerName](const string& key, Contact* contact) {
+        string contactName = key;
         string lowerContactName = contactName;
         transform(lowerContactName.begin(), lowerContactName.end(), lowerContactName.begin(), ::tolower);
         
         // Check if input is found in contact name
         if (lowerContactName.find(lowerName) != string::npos) {
-            results.insert(pair.second);
+            results.insert(contact);
         }
-    }
+    };
+    
+    contactsByName.searchPartial(name, [](const string& partial, const string& full) {
+        string lowerPartial = partial;
+        string lowerFull = full;
+        transform(lowerPartial.begin(), lowerPartial.end(), lowerPartial.begin(), ::tolower);
+        transform(lowerFull.begin(), lowerFull.end(), lowerFull.begin(), ::tolower);
+        return lowerFull.find(lowerPartial) != string::npos;
+    }, searchCallback);
     
     return results;
 }
@@ -138,23 +144,30 @@ set<Contact*> ContactManager::searchByPhone(const string& phone) {
     }
     
     // Debug: Print what we're searching for
- 
+    cout << "  🔍 Searching for phone numbers containing: " << cleanPhone << endl;
     
-    // Search for partial matches in phone numbers using tree traversal
-    vector<pair<string, Contact*>> allPairs = contactsByPhone.getAllPairs();
-    for (const auto& pair : allPairs) {
-        string storedPhone = pair.first;
+    auto searchCallback = [&results, &cleanPhone](const string& key, Contact* contact) {
+        string storedPhone = key;
         string cleanStoredPhone = storedPhone;
         cleanStoredPhone.erase(remove_if(cleanStoredPhone.begin(), cleanStoredPhone.end(), 
                                        [](char c) { return !isdigit(c); }), cleanStoredPhone.end());
         
-        
         // Check if clean input is found in clean stored phone
         if (cleanStoredPhone.find(cleanPhone) != string::npos) {
             cout << "  ✓ Match found!" << endl;
-            results.insert(pair.second);
+            results.insert(contact);
         }
-    }
+    };
+    
+    contactsByPhone.searchPartial(phone, [](const string& partial, const string& full) {
+        string cleanPartial = partial;
+        string cleanFull = full;
+        cleanPartial.erase(remove_if(cleanPartial.begin(), cleanPartial.end(), 
+                                   [](char c) { return !isdigit(c); }), cleanPartial.end());
+        cleanFull.erase(remove_if(cleanFull.begin(), cleanFull.end(), 
+                                [](char c) { return !isdigit(c); }), cleanFull.end());
+        return cleanFull.find(cleanPartial) != string::npos;
+    }, searchCallback);
     
     return results;
 }
@@ -166,18 +179,24 @@ set<Contact*> ContactManager::searchByEmail(const string& email) {
     string lowerEmail = email;
     transform(lowerEmail.begin(), lowerEmail.end(), lowerEmail.begin(), ::tolower);
     
-    // Search for partial matches in emails using tree traversal
-    vector<pair<string, Contact*>> allPairs = contactsByEmail.getAllPairs();
-    for (const auto& pair : allPairs) {
-        string storedEmail = pair.first;
+    auto searchCallback = [&results, &lowerEmail](const string& key, Contact* contact) {
+        string storedEmail = key;
         string lowerStoredEmail = storedEmail;
         transform(lowerStoredEmail.begin(), lowerStoredEmail.end(), lowerStoredEmail.begin(), ::tolower);
         
         // Check if input is found in stored email
         if (lowerStoredEmail.find(lowerEmail) != string::npos) {
-            results.insert(pair.second);
+            results.insert(contact);
         }
-    }
+    };
+    
+    contactsByEmail.searchPartial(email, [](const string& partial, const string& full) {
+        string lowerPartial = partial;
+        string lowerFull = full;
+        transform(lowerPartial.begin(), lowerPartial.end(), lowerPartial.begin(), ::tolower);
+        transform(lowerFull.begin(), lowerFull.end(), lowerFull.begin(), ::tolower);
+        return lowerFull.find(lowerPartial) != string::npos;
+    }, searchCallback);
     
     return results;
 }
@@ -189,10 +208,12 @@ void ContactManager::displayAllContacts() const {
     }
     
     cout << "\n=== TẤT CẢ LIÊN HỆ (" << contactsByName.size() << ") ===" << endl;
-    vector<pair<string, Contact*>> allPairs = contactsByName.getAllPairs();
-    for (const auto& pair : allPairs) {
-        pair.second->display();
-    }
+    
+    auto displayCallback = [](const string& key, Contact* contact) {
+        contact->display();
+    };
+    
+    contactsByName.forEach(displayCallback);
 }
 
 void ContactManager::displayContact(int id) const {
@@ -421,10 +442,12 @@ ContactManager::~ContactManager() {
 }
 
 void ContactManager::clearAll() {
-    vector<pair<int, Contact*>> allPairs = contactsById.getAllPairs();
-    for (auto& pair : allPairs) {
-        delete pair.second;
-    }
+    auto deleteCallback = [](const int& key, Contact* contact) {
+        delete contact;
+    };
+    
+    contactsById.forEach(deleteCallback);
+    
     contactsByName.clear();
     contactsByPhone.clear();
     contactsByEmail.clear();
