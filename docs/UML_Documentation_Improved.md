@@ -2,35 +2,35 @@
 
 ## 🎯 TỔNG QUAN HỆ THỐNG
 
-Hệ thống Quản lý Danh bạ Thông minh được thiết kế theo **Modern C++ Architecture** với việc áp dụng nhiều design patterns khác nhau. Tài liệu UML này tuân thủ chuẩn **UML 2.5** và cung cấp cái nhìn toàn diện về kiến trúc hệ thống.
+Hệ thống Quản lý Danh bạ Thông minh được thiết kế theo **Kiến trúc C++ Hiện đại** với việc áp dụng nhiều design patterns khác nhau. Tài liệu UML này tuân thủ chuẩn **UML 2.5** và cung cấp cái nhìn toàn diện về kiến trúc hệ thống.
 
 ---
 
-## 🏗️ KIẾN TRÚC TỔNG THỂ (SYSTEM ARCHITECTURE)
+## 🏗️ KIẾN TRÚC TỔNG THỂ (KIẾN TRÚC HỆ THỐNG)
 
-### **1. 🎯 HIGH-LEVEL ARCHITECTURE DIAGRAM**
+### **1. 🎯 SƠ ĐỒ KIẾN TRÚC CẤP CAO**
 
 ```mermaid
 graph TB
-    subgraph "Application Layer"
+    subgraph "Tầng Ứng dụng"
         MAIN[main.cpp]
         UI[ContactUI]
     end
     
-    subgraph "Business Logic Layer"
+    subgraph "Tầng Logic Nghiệp vụ"
         CM[ContactManager<br/>Singleton]
     end
     
-    subgraph "Data Structure Layer"
-        BST[BinarySearchTree]
-        RBT[RedBlackTree]
+    subgraph "Tầng Cấu trúc Dữ liệu"
+        BST[Cây Tìm kiếm Nhị phân]
+        RBT[Cây Đỏ-Đen]
     end
     
-    subgraph "Entity Layer"
-        CONTACT[Contact]
+    subgraph "Tầng Thực thể"
+        CONTACT[Liên hệ]
     end
     
-    subgraph "Exception Layer"
+    subgraph "Tầng Xử lý Ngoại lệ"
         EX[ContactException]
     end
     
@@ -51,27 +51,27 @@ graph TB
     style EX fill:#ffebee
 ```
 
-### **2. 📱 LAYER RESPONSIBILITY MATRIX**
+### **2. 📱 MA TRẬN TRÁCH NHIỆM CÁC TẦNG**
 
-| Layer | Components | Responsibility | Design Pattern |
+| Tầng | Thành phần | Trách nhiệm | Design Pattern |
 |-------|------------|----------------|----------------|
-| **Application** | `main.cpp` | Entry point, Global exception handling | Exception Handler |
-| **Presentation** | `ContactUI` | User interface, Input validation, Navigation | MVC (View+Controller) |
-| **Business Logic** | `ContactManager` | Business rules, Data management, Index sync | Singleton, Factory, Observer |
-| **Data Structure** | `BST`, `RBT` | Data storage, Search optimization | Template Method, Strategy |
-| **Entity** | `Contact` | Data model, Validation | Value Object |
-| **Exception** | `ContactException` | Error handling, User feedback | Exception Hierarchy |
+| **Ứng dụng** | `main.cpp` | Điểm khởi đầu, Xử lý ngoại lệ toàn cục | Exception Handler |
+| **Giao diện** | `ContactUI` | Giao diện người dùng, Kiểm tra đầu vào, Điều hướng | MVC (View+Controller) |
+| **Logic Nghiệp vụ** | `ContactManager` | Quy tắc nghiệp vụ, Quản lý dữ liệu, Đồng bộ chỉ mục | Singleton, Factory, Observer |
+| **Cấu trúc Dữ liệu** | `BST`, `RBT` | Lưu trữ dữ liệu, Tối ưu hóa tìm kiếm | Template Method, Strategy |
+| **Thực thể** | `Contact` | Mô hình dữ liệu, Xác thực | Value Object |
+| **Xử lý Ngoại lệ** | `ContactException` | Xử lý lỗi, Phản hồi người dùng | Exception Hierarchy |
 
 ---
 
-## 📊 CLASS DIAGRAM (CHUẨN UML 2.5)
+## 📊 SƠ ĐỒ LỚP (CHUẨN UML 2.5)
 
-### **1. 🏠 CONTACT ENTITY CLASS**
+### **1. 🏠 LỚP THỰC THỂ LIÊN HỆ**
 
 ```mermaid
 classDiagram
     class Contact {
-        <<Entity>>
+        <<Thực thể>>
         -string name
         -string phoneNumber
         -string email
@@ -100,17 +100,17 @@ classDiagram
         +string toString() const
     }
     
-    note for Contact "Value Object Pattern\n- Immutable ID\n- Validation rules\n- Business logic"
+    note for Contact "Mẫu Value Object\n- ID không thay đổi\n- Quy tắc xác thực\n- Logic nghiệp vụ"
 ```
 
-**UML Notation:**
-- **<<Entity>>**: Stereotype cho entity class
-- **-**: Private members (encapsulation)
-- **+**: Public methods (interface)
+**Ký hiệu UML:**
+- **<<Thực thể>>**: Stereotype cho lớp thực thể
+- **-**: Thành viên riêng tư (encapsulation)
+- **+**: Phương thức công khai (interface)
 - **~**: Destructor
-- **static**: Class-level members
+- **static**: Thành viên cấp lớp
 
-### **2. 🎯 CONTACT MANAGER CLASS (SINGLETON)**
+### **2. 🎯 QUẢN LÝ LIÊN HỆ (SINGLETON)**
 
 ```mermaid
 classDiagram
@@ -150,10 +150,10 @@ classDiagram
         -void syncAllIndexes(Contact* contact)
     }
     
-    note for ContactManager "Singleton Pattern\n- Single instance\n- Global access\n- Lazy initialization"
+    note for ContactManager "Mẫu Singleton\n- Một thể hiện duy nhất\n- Truy cập toàn cục\n- Khởi tạo trễ"
 ```
 
-### **3. 🖥️ CONTACT UI CLASS (MVC PATTERN)**
+### **3. 🖥️ GIAO DIỆN NGƯỜI DÙNG (MVC PATTERN)**
 
 ```mermaid
 classDiagram
@@ -183,10 +183,10 @@ classDiagram
         -bool isValidEmail(string email) const
     }
     
-    note for ContactUI "MVC Pattern\n- View: Display methods\n- Controller: Input handling\n- Navigation logic"
+    note for ContactUI "Mẫu MVC\n- View: Các phương thức hiển thị\n- Controller: Xử lý đầu vào\n- Logic điều hướng"
 ```
 
-### **4. 🌳 BINARY SEARCH TREE TEMPLATE CLASS**
+### **4. 🌳 CÂY TÌM KIẾM NHỊ PHÂN (TEMPLATE CLASS)**
 
 ```mermaid
 classDiagram
@@ -237,10 +237,10 @@ classDiagram
     BinarySearchTree --> Node : contains
     BinarySearchTree --> "0..*" Node : manages
     
-    note for BinarySearchTree "Template Method Pattern\n- Algorithm structure\n- Implementation variation\n- Callback support"
+    note for BinarySearchTree "Mẫu Template Method\n- Cấu trúc thuật toán\n- Biến đổi triển khai\n- Hỗ trợ callback"
 ```
 
-### **5. 🔴⚫ RED-BLACK TREE TEMPLATE CLASS**
+### **5. 🔴⚫ CÂY ĐỎ-ĐEN (TEMPLATE CLASS)**
 
 ```mermaid
 classDiagram
@@ -302,10 +302,10 @@ classDiagram
     RedBlackTree --> "0..*" RBTNode : manages
     RBTNode --> Color : has
     
-    note for RedBlackTree "Self-Balancing Tree\n- Red-Black properties\n- O(log n) guaranteed\n- Rotation operations"
+    note for RedBlackTree "Cây tự cân bằng\n- Thuộc tính đỏ-đen\n- Đảm bảo O(log n)\n- Các phép quay"
 ```
 
-### **6. ⚠️ EXCEPTION HIERARCHY CLASS**
+### **6. ⚠️ TỔ HIỆP LỖI (HIERARCHY)**
 
 ```mermaid
 classDiagram
@@ -343,14 +343,14 @@ classDiagram
         +EmptyInput(string field)
     }
     
-    note for ContactException "Exception Hierarchy\n- Custom exception types\n- User-friendly messages\n- Proper error handling"
+    note for ContactException "Tổ hiệp lỗi\n- Các loại ngoại lệ tùy chỉnh\n- Tin nhắn phản hồi người dùng\n- Xử lý lỗi đúng cách"
 ```
 
 ---
 
-## 🔄 SEQUENCE DIAGRAM (CHUẨN UML 2.5)
+## 🔄 SƠ ĐỒ DỊCH CHUYỂN (CHUẨN UML 2.5)
 
-### **1. ➕ ADD CONTACT SEQUENCE**
+### **1. ➕ DỊCH CHUYỂN THÊM LIÊN HỆ**
 
 ```mermaid
 sequenceDiagram
@@ -376,36 +376,36 @@ sequenceDiagram
         ContactManager->>ContactManager: addToIndexes(contact)
         
         ContactManager->>BST: insert(name, contact)
-        BST-->>ContactManager: Success
+        BST-->>ContactManager: Thành công
         
         ContactManager->>BST: insert(id, contact)
-        BST-->>ContactManager: Success
+        BST-->>ContactManager: Thành công
         
         alt Có số điện thoại
             ContactManager->>ContactManager: isPhoneNumberDuplicate(phone)
             ContactManager-->>ContactManager: false
             ContactManager->>RBT: insert(phone, contact)
-            RBT-->>ContactManager: Success
+            RBT-->>ContactManager: Thành công
         end
         
         alt Có email
             ContactManager->>ContactManager: isEmailDuplicate(email)
             ContactManager-->>ContactManager: false
             ContactManager->>RBT: insert(email, contact)
-            RBT-->>ContactManager: Success
+            RBT-->>ContactManager: Thành công
         end
         
         ContactManager-->>ContactUI: true
         ContactUI->>User: Hiển thị menu thêm chi tiết
         
     else Tên không hợp lệ hoặc trùng lặp
-        ContactManager->>ExceptionHandler: Throw exception
-        ExceptionHandler-->>ContactUI: Exception message
+        ContactManager->>ExceptionHandler: Ném ngoại lệ
+        ExceptionHandler-->>ContactUI: Tin nhắn ngoại lệ
         ContactUI-->>User: Hiển thị lỗi
     end
 ```
 
-### **2. 🔍 SEARCH CONTACT SEQUENCE**
+### **2. 🔍 DỊCH CHUYỂN TÌM KIẾM LIÊN HỆ**
 
 ```mermaid
 sequenceDiagram
@@ -426,17 +426,17 @@ sequenceDiagram
         ContactUI->>ContactManager: searchByName(name)
         ContactManager->>BST: searchPartial(name, matchFunc, callback)
         
-        loop Tree traversal
+        loop Duyệt cây
             BST->>BST: searchPartialCallback(node)
-            alt Node matches
+            alt Node khớp
                 BST->>Results: callback(key, value)
                 Results->>Results: insert(contact)
             end
-            BST->>BST: Traverse left subtree
-            BST->>BST: Traverse right subtree
+            BST->>BST: Duyệt cây con trái
+            BST->>BST: Duyệt cây con phải
         end
         
-        BST-->>ContactManager: Traversal completed
+        BST-->>ContactManager: Duyệt hoàn tất
         ContactManager-->>ContactUI: set<Contact*> results
         ContactUI->>User: Hiển thị kết quả
         
@@ -444,15 +444,15 @@ sequenceDiagram
         User->>ContactUI: Nhập số điện thoại
         ContactUI->>ContactManager: searchByPhone(phone)
         
-        alt Exact match first
+        alt Trùng chính xác đầu tiên
             ContactManager->>RBT: find(phone)
             RBT-->>ContactManager: Contact* contact
             ContactManager->>Results: insert(contact)
             ContactManager-->>ContactUI: results
             ContactUI->>User: Hiển thị kết quả
-        else Partial search
+        else Tìm kiếm từng phần
             ContactManager->>RBT: searchPartial(phone, matchFunc, callback)
-            RBT-->>ContactManager: Traversal completed
+            RBT-->>ContactManager: Duyệt hoàn tất
             ContactManager-->>ContactUI: set<Contact*> results
             ContactUI->>User: Hiển thị kết quả
         end
@@ -461,38 +461,38 @@ sequenceDiagram
 
 ---
 
-## 🗂️ COMPONENT DIAGRAM (CHUẨN UML 2.5)
+## 🗂️ SƠ ĐỒ THÀNH PHẦN (CHUẨN UML 2.5)
 
 ```mermaid
 graph TB
     subgraph "Hệ thống Quản lý Danh bạ"
-        subgraph "Application Components"
-            MAIN[main.cpp<br/>Entry Point]
+        subgraph "Các thành phần ứng dụng"
+            MAIN[main.cpp<br/>Điểm khởi đầu]
         end
         
-        subgraph "Presentation Components"
-            UI[ContactUI<br/>User Interface]
+        subgraph "Các thành phần giao diện"
+            UI[ContactUI<br/>Giao diện người dùng]
         end
         
-        subgraph "Business Logic Components"
-            CM[ContactManager<br/>Business Logic]
+        subgraph "Các thành phần logic nghiệp vụ"
+            CM[ContactManager<br/>Logic nghiệp vụ]
         end
         
-        subgraph "Data Structure Components"
-            BST[BinarySearchTree<br/>Ordered Storage]
-            RBT[RedBlackTree<br/>Balanced Storage]
+        subgraph "Các thành phần cấu trúc dữ liệu"
+            BST[BinarySearchTree<br/>Lưu trữ sắp xếp]
+            RBT[RedBlackTree<br/>Lưu trữ cân bằng]
         end
         
-        subgraph "Entity Components"
-            C[Contact<br/>Data Model]
+        subgraph "Các thành phần thực thể"
+            C[Contact<br/>Mô hình dữ liệu]
         end
         
-        subgraph "Exception Components"
-            EX[ContactException<br/>Error Handling]
+        subgraph "Các thành phần xử lý ngoại lệ"
+            EX[ContactException<br/>Xử lý lỗi]
         end
     end
     
-    subgraph "External Dependencies"
+    subgraph "Các phụ thuộc bên ngoài"
         STL[Standard Template Library]
         IO[iostream]
         STRING[string]
@@ -529,48 +529,48 @@ graph TB
 
 ---
 
-## 🔄 ACTIVITY DIAGRAM (CHUẨN UML 2.5)
+## 🔄 SƠ ĐỒ HOẠT ĐỘNG (CHUẨN UML 2.5)
 
-### **1. 🚀 MAIN APPLICATION FLOW**
+### **1. 🚀 DÒNG HOẠT ĐỘNG CHÍNH ỨNG DỤNG**
 
 ```mermaid
 flowchart TD
-    A[Start Application] --> B[Initialize ContactUI]
-    B --> C[Show Welcome Screen]
-    C --> D[Display Main Menu]
-    D --> E{User Choice}
+    A[Khởi động ứng dụng] --> B[Khởi tạo ContactUI]
+    B --> C[Hiển thị màn hình chào]
+    C --> D[Hiển thị menu chính]
+    D --> E{Lựa chọn của người dùng}
     
-    E -->|1| F[Add Contact Flow]
-    E -->|2| G[Manage Contact Flow]
-    E -->|3| H[Search Contact Flow]
-    E -->|4| I[Display All Contacts]
-    E -->|5| J[Show Statistics]
-    E -->|6| K[Exit Application]
+    E -->|1| F[Dòng thêm liên hệ]
+    E -->|2| G[Dòng quản lý liên hệ]
+    E -->|3| H[Dòng tìm kiếm liên hệ]
+    E -->|4| I[Hiển thị tất cả liên hệ]
+    E -->|5| J[Hiển thị thống kê]
+    E -->|6| K[Kết thúc ứng dụng]
     
-    F --> L[Input Contact Name]
-    L --> M{Validate Name}
-    M -->|Invalid| N[Show Error]
-    M -->|Valid| O[Check Duplicate]
-    O -->|Duplicate| P[Show Error]
-    O -->|Unique| Q[Create Contact]
-    Q --> R[Add to Indexes]
-    R --> S[Show Success]
+    F --> L[Nhập tên liên hệ]
+    L --> M{Xác thực tên}
+    M -->|Không hợp lệ| N[Hiển thị lỗi]
+    M -->|Hợp lệ| O[Kiểm tra trùng lặp]
+    O -->|Trùng lặp| P[Hiển thị lỗi]
+    O -->|Độc lập| Q[Tạo liên hệ]
+    Q --> R[Thêm vào chỉ mục]
+    R --> S[Hiển thị thành công]
     
-    G --> T[Find Contact]
-    T --> U{Contact Found?}
-    U -->|No| V[Show Error]
-    U -->|Yes| W[Show Edit Menu]
+    G --> T[Tìm kiếm liên hệ]
+    T --> U{Liên hệ tìm thấy?}
+    U -->|Không| V[Hiển thị lỗi]
+    U -->|Có| W[Hiển thị menu chỉnh sửa]
     
-    H --> X[Choose Search Type]
-    X --> Y[Input Search Term]
-    Y --> Z[Execute Search]
-    Z --> AA[Display Results]
+    H --> X[Chọn loại tìm kiếm]
+    X --> Y[Nhập thuật ngữ tìm kiếm]
+    Y --> Z[Thực thi tìm kiếm]
+    Z --> AA[Hiển thị kết quả]
     
-    I --> BB[Traverse All Contacts]
-    BB --> CC[Display Results]
+    I --> BB[Duyệt tất cả liên hệ]
+    BB --> CC[Hiển thị kết quả]
     
-    J --> DD[Calculate Statistics]
-    DD --> EE[Display Statistics]
+    J --> DD[Tính toán thống kê]
+    DD --> EE[Hiển thị thống kê]
     
     N --> D
     P --> D
@@ -581,206 +581,206 @@ flowchart TD
     CC --> D
     EE --> D
     
-    K --> FF[Cleanup Resources]
-    FF --> GG[End Application]
+    K --> FF[Dọn dẹp tài nguyên]
+    FF --> GG[Kết thúc ứng dụng]
 ```
 
-### **2. 🔍 SEARCH OPERATION FLOW**
+### **2. 🔍 DỊCH CHUYỂN HOẠT ĐỘNG TÌM KIẾM**
 
 ```mermaid
 flowchart TD
-    A[Start Search] --> B[Choose Search Type]
-    B --> C{Search Type}
+    A[Bắt đầu tìm kiếm] --> B[Chọn loại tìm kiếm]
+    B --> C{Loại tìm kiếm}
     
-    C -->|Name| D[Input Name]
-    C -->|Phone| E[Input Phone]
-    C -->|Email| F[Input Email]
+    C -->|Tên| D[Nhập tên]
+    C -->|Số điện thoại| E[Nhập số điện thoại]
+    C -->|Email| F[Nhập email]
     
-    D --> G[Convert to Lowercase]
-    G --> H[Define Search Strategy]
-    H --> I[Execute Tree Traversal]
+    D --> G[Chuyển thành chữ thường]
+    G --> H[Định nghĩa chiến lược tìm kiếm]
+    H --> I[Thực thi duyệt cây]
     
-    E --> J[Check Exact Match]
-    J --> K{Exact Match?}
-    K -->|Yes| L[Return Result]
-    K -->|No| M[Clean Phone Number]
-    M --> N[Execute Partial Search]
+    E --> J[Kiểm tra khớp chính xác]
+    J --> K{Khớp chính xác?}
+    K -->|Có| L[Trả về kết quả]
+    K -->|Không| M[Làm sạch số điện thoại]
+    M --> N[Thực thi tìm kiếm từng phần]
     
-    F --> O[Convert to Lowercase]
-    O --> P[Execute Tree Traversal]
+    F --> O[Chuyển thành chữ thường]
+    O --> P[Thực thi duyệt cây]
     
-    I --> Q[Process Each Node]
-    Q --> R{Node Matches?}
-    R -->|Yes| S[Add to Results]
-    R -->|No| T[Continue Traversal]
+    I --> Q[Xử lý mỗi nút]
+    Q --> R{Nút có khớp?}
+    R -->|Có| S[Thêm vào kết quả]
+    R -->|Không| T[Tiếp tục duyệt]
     
-    N --> U[Process Each Node]
-    U --> V{Node Matches?}
-    V -->|Yes| W[Add to Results]
-    V -->|No| X[Continue Traversal]
+    N --> U[Xử lý mỗi nút]
+    U --> V{Nút có khớp?}
+    V -->|Có| W[Thêm vào kết quả]
+    V -->|Không| X[Tiếp tục duyệt]
     
-    P --> Y[Process Each Node]
-    Y --> Z{Node Matches?}
-    Z -->|Yes| AA[Add to Results]
-    Z -->|No| BB[Continue Traversal]
+    P --> Y[Xử lý mỗi nút]
+    Y --> Z{Nút có khớp?}
+    Z -->|Có| AA[Thêm vào kết quả]
+    Z -->|Không| BB[Tiếp tục duyệt]
     
-    S --> CC[Check More Nodes]
+    S --> CC[Kiểm tra nút tiếp theo]
     T --> CC
-    W --> DD[Check More Nodes]
+    W --> DD[Kiểm tra nút tiếp theo]
     X --> DD
-    AA --> EE[Check More Nodes]
+    AA --> EE[Kiểm tra nút tiếp theo]
     BB --> EE
     
-    CC --> FF{More Nodes?}
+    CC --> FF{Có nút tiếp theo?}
     DD --> FF
     EE --> FF
     
-    FF -->|Yes| Q
-    FF -->|No| GG[Return Results]
+    FF -->|Có| Q
+    FF -->|Không| GG[Trả về kết quả]
     
     L --> GG
-    GG --> HH[Display Results]
-    HH --> II[End Search]
+    GG --> HH[Hiển thị kết quả]
+    HH --> II[Kết thúc tìm kiếm]
 ```
 
 ---
 
-## 🎨 STATE DIAGRAM (CHUẨN UML 2.5)
+## 🎨 SƠ ĐỒ TRẠNG THÁI (CHUẨN UML 2.5)
 
-### **1. 🔄 CONTACT STATE MACHINE**
+### **1. 🔄 TRẠNG THÁI LIÊN HỆ**
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Empty: Initialize
-    Empty --> Basic: Add Name
-    Basic --> WithPhone: Add Phone
-    Basic --> WithEmail: Add Email
-    Basic --> WithAddress: Add Address
-    Basic --> WithNotes: Add Notes
-    Basic --> Complete: Add All Info
+    [*] --> Empty: Khởi tạo
+    Empty --> Basic: Thêm tên
+    Basic --> WithPhone: Thêm số điện thoại
+    Basic --> WithEmail: Thêm email
+    Basic --> WithAddress: Thêm địa chỉ
+    Basic --> WithNotes: Thêm ghi chú
+    Basic --> Complete: Thêm tất cả thông tin
     
-    WithPhone --> WithPhone: Update Phone
-    WithPhone --> WithEmail: Add Email
-    WithPhone --> WithAddress: Add Address
-    WithPhone --> WithNotes: Add Notes
-    WithPhone --> Complete: Add All Info
+    WithPhone --> WithPhone: Cập nhật số điện thoại
+    WithPhone --> WithEmail: Thêm email
+    WithPhone --> WithAddress: Thêm địa chỉ
+    WithPhone --> WithNotes: Thêm ghi chú
+    WithPhone --> Complete: Thêm tất cả thông tin
     
-    WithEmail --> WithPhone: Add Phone
-    WithEmail --> WithEmail: Update Email
-    WithEmail --> WithAddress: Add Address
-    WithEmail --> WithNotes: Add Notes
-    WithEmail --> Complete: Add All Info
+    WithEmail --> WithPhone: Thêm số điện thoại
+    WithEmail --> WithEmail: Cập nhật email
+    WithEmail --> WithAddress: Thêm địa chỉ
+    WithEmail --> WithNotes: Thêm ghi chú
+    WithEmail --> Complete: Thêm tất cả thông tin
     
-    WithAddress --> WithPhone: Add Phone
-    WithAddress --> WithEmail: Add Email
-    WithAddress --> WithAddress: Update Address
-    WithAddress --> WithNotes: Add Notes
-    WithAddress --> Complete: Add All Info
+    WithAddress --> WithPhone: Thêm số điện thoại
+    WithAddress --> WithEmail: Thêm email
+    WithAddress --> WithAddress: Cập nhật địa chỉ
+    WithAddress --> WithNotes: Thêm ghi chú
+    WithAddress --> Complete: Thêm tất cả thông tin
     
-    WithNotes --> WithPhone: Add Phone
-    WithNotes --> WithEmail: Add Email
-    WithNotes --> WithAddress: Add Address
-    WithNotes --> WithNotes: Update Notes
-    WithNotes --> Complete: Add All Info
+    WithNotes --> WithPhone: Thêm số điện thoại
+    WithNotes --> WithEmail: Thêm email
+    WithNotes --> WithAddress: Thêm địa chỉ
+    WithNotes --> WithNotes: Cập nhật ghi chú
+    WithNotes --> Complete: Thêm tất cả thông tin
     
-    Complete --> Complete: Update Any Info
-    Complete --> [*]: Delete Contact
+    Complete --> Complete: Cập nhật bất kỳ thông tin
+    Complete --> [*]: Xóa liên hệ
     
-    note right of Empty : "Minimal state\nName only"
-    note right of Basic : "Basic contact\nName + optional fields"
-    note right of Complete : "Full contact\nAll fields populated"
+    note right of Empty : "Trạng thái tối thiểu\nChỉ tên"
+    note right of Basic : "Liên hệ cơ bản\nTên + các trường tùy chọn"
+    note right of Complete : "Liên hệ đầy đủ\nTất cả các trường được điền"
 ```
 
-### **2. 🔄 APPLICATION STATE MACHINE**
+### **2. 🔄 TRẠNG THÁI ỨNG DỤNG**
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Welcome: Start Application
-    Welcome --> MainMenu: Show Main Menu
-    MainMenu --> AddContact: Choose Add
-    MainMenu --> ManageContact: Choose Manage
-    MainMenu --> SearchContact: Choose Search
-    MainMenu --> DisplayAll: Choose Display
-    MainMenu --> Statistics: Choose Statistics
-    MainMenu --> Exit: Choose Exit
+    [*] --> Welcome: Khởi động ứng dụng
+    Welcome --> MainMenu: Hiển thị menu chính
+    MainMenu --> AddContact: Chọn thêm
+    MainMenu --> ManageContact: Chọn quản lý
+    MainMenu --> SearchContact: Chọn tìm kiếm
+    MainMenu --> DisplayAll: Chọn hiển thị
+    MainMenu --> Statistics: Chọn thống kê
+    MainMenu --> Exit: Chọn thoát
     
-    AddContact --> AddDetails: Name Added
-    AddDetails --> AddDetails: Add More Details
-    AddDetails --> MainMenu: Complete
+    AddContact --> AddDetails: Tên đã thêm
+    AddDetails --> AddDetails: Thêm thông tin chi tiết
+    AddDetails --> MainMenu: Hoàn tất
     
-    ManageContact --> ManageMenu: Show Manage Menu
-    ManageMenu --> EditContact: Choose Edit
-    ManageMenu --> DeleteContact: Choose Delete
-    ManageMenu --> ViewContact: Choose View
-    ManageMenu --> MainMenu: Back to Main
+    ManageContact --> ManageMenu: Hiển thị menu quản lý
+    ManageMenu --> EditContact: Chọn chỉnh sửa
+    ManageMenu --> DeleteContact: Chọn xóa
+    ManageMenu --> ViewContact: Chọn xem
+    ManageMenu --> MainMenu: Quay lại menu chính
     
-    EditContact --> EditMenu: Show Edit Menu
-    EditMenu --> EditMenu: Edit Information
-    EditMenu --> ManageMenu: Complete Edit
+    EditContact --> EditMenu: Hiển thị menu chỉnh sửa
+    EditMenu --> EditMenu: Chỉnh sửa thông tin
+    EditMenu --> ManageMenu: Hoàn tất chỉnh sửa
     
-    SearchContact --> SearchMenu: Show Search Menu
-    SearchMenu --> SearchByName: Search by Name
-    SearchMenu --> SearchByPhone: Search by Phone
-    SearchMenu --> SearchByEmail: Search by Email
-    SearchMenu --> MainMenu: Back to Main
+    SearchContact --> SearchMenu: Hiển thị menu tìm kiếm
+    SearchMenu --> SearchByName: Tìm kiếm theo tên
+    SearchMenu --> SearchByPhone: Tìm kiếm theo số điện thoại
+    SearchMenu --> SearchByEmail: Tìm kiếm theo email
+    SearchMenu --> MainMenu: Quay lại menu chính
     
-    DisplayAll --> MainMenu: Display Complete
-    Statistics --> MainMenu: Statistics Complete
+    DisplayAll --> MainMenu: Hiển thị hoàn tất
+    Statistics --> MainMenu: Hoàn tất thống kê
     
-    Exit --> [*]: End Application
+    Exit --> [*]: Kết thúc ứng dụng
     
-    note right of Welcome : "Application startup"
-    note right of MainMenu : "Main navigation hub"
-    note right of AddContact : "Contact creation flow"
-    note right of ManageContact : "Contact management flow"
-    note right of SearchContact : "Search operations flow"
+    note right of Welcome : "Khởi động ứng dụng"
+    note right of MainMenu : "Trung tâm điều hướng chính"
+    note right of AddContact : "Dòng tạo liên hệ"
+    note right of ManageContact : "Dòng quản lý liên hệ"
+    note right of SearchContact : "Dòng hoạt động tìm kiếm"
 ```
 
 ---
 
-## 📊 OBJECT DIAGRAM (CHUẬN UML 2.5)
+## 📊 SƠ ĐỒ ĐỐI TƯỢNG (CHUẬN UML 2.5)
 
-### **1. 🔍 SYSTEM INSTANCE EXAMPLE**
+### **1. 🔍 VÍ DỤ THỂ HIỆN HỆ THỐNG**
 
 ```mermaid
 graph TB
-    subgraph "System Instance: Contact Management System"
-        subgraph "ContactManager Instance"
-            CM[ContactManager<br/>instance: 0x7fff1234]
+    subgraph "Thể hiện hệ thống: Hệ thống Quản lý Danh bạ"
+        subgraph "Thể hiện thể hiện ContactManager"
+            CM[ContactManager<br/>thể hiện: 0x7fff1234]
         end
         
-        subgraph "Contact Instances"
-            C1[Contact<br/>id: 1<br/>name: "Nguyễn Văn A"<br/>phone: "0123456789"<br/>email: "a@email.com"]
-            C2[Contact<br/>id: 2<br/>name: "Trần Thị B"<br/>phone: "0987654321"<br/>email: "b@email.com"]
-            C3[Contact<br/>id: 3<br/>name: "Lê Văn C"<br/>phone: "1122334455"<br/>email: "c@email.com"]
+        subgraph "Các thể hiện liên hệ"
+            C1[Contact<br/>id: 1<br/>tên: "Nguyễn Văn A"<br/>số điện thoại: "0123456789"<br/>email: "a@email.com"]
+            C2[Contact<br/>id: 2<br/>tên: "Trần Thị B"<br/>số điện thoại: "0987654321"<br/>email: "b@email.com"]
+            C3[Contact<br/>id: 3<br/>tên: "Lê Văn C"<br/>số điện thoại: "1122334455"<br/>email: "c@email.com"]
         end
         
-        subgraph "Index Instances"
-            BST1[BinarySearchTree<br/>root: Node*<br/>size: 3]
-            BST2[BinarySearchTree<br/>root: Node*<br/>size: 3]
-            RBT1[RedBlackTree<br/>root: Node*<br/>size: 3]
-            RBT2[RedBlackTree<br/>root: Node*<br/>size: 3]
+        subgraph "Các thể hiện chỉ mục"
+            BST1[BinarySearchTree<br/>gốc: Node*<br/>kích thước: 3]
+            BST2[BinarySearchTree<br/>gốc: Node*<br/>kích thước: 3]
+            RBT1[RedBlackTree<br/>gốc: Node*<br/>kích thước: 3]
+            RBT2[RedBlackTree<br/>gốc: Node*<br/>kích thước: 3]
         end
         
-        subgraph "Node Instances"
-            N1[Node<br/>key: "Nguyễn Văn A"<br/>value: Contact*<br/>left: nullptr<br/>right: Node*]
-            N2[Node<br/>key: "Trần Thị B"<br/>value: Contact*<br/>left: Node*<br/>right: Node*]
-            N3[Node<br/>key: "Lê Văn C"<br/>value: Contact*<br/>left: Node*<br/>right: nullptr]
+        subgraph "Các thể hiện nút"
+            N1[Node<br/>key: "Nguyễn Văn A"<br/>value: Contact*<br/>trái: nullptr<br/>phải: Node*]
+            N2[Node<br/>key: "Trần Thị B"<br/>value: Contact*<br/>trái: Node*<br/>phải: Node*]
+            N3[Node<br/>key: "Lê Văn C"<br/>value: Contact*<br/>trái: Node*<br/>phải: nullptr]
         end
     end
     
-    CM --> BST1 : manages
-    CM --> BST2 : manages
-    CM --> RBT1 : manages
-    CM --> RBT2 : manages
+    CM --> BST1 : quản lý
+    CM --> BST2 : quản lý
+    CM --> RBT1 : quản lý
+    CM --> RBT2 : quản lý
     
-    BST1 --> N1 : contains
-    BST1 --> N2 : contains
-    BST1 --> N3 : contains
+    BST1 --> N1 : chứa
+    BST1 --> N2 : chứa
+    BST1 --> N3 : chứa
     
-    N1 --> C1 : references
-    N2 --> C2 : references
-    N3 --> C3 : references
+    N1 --> C1 : tham chiếu
+    N2 --> C2 : tham chiếu
+    N3 --> C3 : tham chiếu
     
     style CM fill:#e8f5e8
     style C1 fill:#fce4ec
@@ -797,80 +797,80 @@ graph TB
 
 ---
 
-## 🔧 IMPLEMENTATION NOTES
+## 🔧 GHI CHÚ VỀ TRIỂN KHAI
 
-### **1. 📋 UML COMPLIANCE CHECKLIST**
+### **1. 📋 BẢNG KIỂM TRA VIỆC TUÂN THỦ UML**
 
-- ✅ **Class Diagrams**: Proper stereotypes, visibility, relationships
-- ✅ **Sequence Diagrams**: Lifelines, messages, activation bars
-- ✅ **Component Diagrams**: Components, interfaces, dependencies
-- ✅ **Activity Diagrams**: Actions, decisions, flows, swimlanes
-- ✅ **State Diagrams**: States, transitions, events, actions
-- ✅ **Object Diagrams**: Instance examples, object relationships
+- ✅ **Sơ đồ lớp**: Stereotypes, độ truy cập, quan hệ
+- ✅ **Sơ đồ dịch chuyển**: Lifelines, tin nhắn, thanh hoạt động
+- ✅ **Sơ đồ thành phần**: Thành phần, giao diện, phụ thuộc
+- ✅ **Sơ đồ hoạt động**: Hành động, quyết định, dòng, swimlanes
+- ✅ **Sơ đồ trạng thái**: Trạng thái, chuyển tiếp, sự kiện, hành động
+- ✅ **Sơ đồ đối tượng**: Ví dụ thể hiện, quan hệ đối tượng
 
-### **2. 🎯 DESIGN PATTERN MAPPING**
+### **2. 🎯 ÁNH XẠ CHIẾN LƯỢC PATTERN**
 
-| UML Element | Design Pattern | Implementation |
+| Phần tử UML | Pattern thiết kế | Triển khai |
 |-------------|----------------|----------------|
-| **Singleton** | ContactManager | Static instance + getInstance() |
-| **Template Method** | BST/RBT | Traversal algorithm structure |
-| **Strategy** | Search operations | std::function callbacks |
-| **Factory** | Contact creation | addContact() method |
-| **Observer** | Index sync | addToIndexes() method |
-| **MVC** | ContactUI | View + Controller separation |
+| **Singleton** | ContactManager | Thể hiện độc nhất + getInstance() |
+| **Template Method** | BST/RBT | Cấu trúc thuật toán duyệt |
+| **Strategy** | Hoạt động tìm kiếm | std::function callbacks |
+| **Factory** | Tạo liên hệ | phương thức addContact() |
+| **Observer** | Đồng bộ chỉ mục | phương thức addToIndexes() |
+| **MVC** | ContactUI | Phân tách View + Controller |
 
-### **3. 🔍 RELATIONSHIP TYPES**
+### **3. 🔍 CÁC LOẠI QUAN HỆ**
 
-- **Association**: ContactManager manages Contact objects
-- **Composition**: ContactManager contains tree structures
-- **Aggregation**: Tree structures contain Contact pointers
-- **Dependency**: UI depends on ContactManager
-- **Inheritance**: Exception hierarchy
+- **Quan hệ kết nối**: ContactManager quản lý các đối tượng Contact
+- **Quan hệ kết hợp**: ContactManager chứa các cấu trúc cây
+- **Quan hệ tổng hợp**: Các cấu trúc cây chứa con trỏ Contact
+- **Phụ thuộc**: UI phụ thuộc vào ContactManager
+- **Kế thừa**: Tổ hiệp lỗi
 
 ---
 
-## 📈 PERFORMANCE ANALYSIS
+## 📈 PHÂN TÍCH HIỆU SUẤT
 
-### **1. ⏱️ TIME COMPLEXITY**
+### **1. ⏱️ ĐỘ PHỨC TẠP THỜI GIAN**
 
-| Operation | BST (Average) | BST (Worst) | RBT (Guaranteed) |
+| Hoạt động | BST (Trung bình) | BST (Tệ nhất) | RBT (Đảm bảo) |
 |-----------|---------------|-------------|------------------|
-| **Insert** | O(log n) | O(n) | O(log n) |
-| **Search** | O(log n) | O(n) | O(log n) |
-| **Delete** | O(log n) | O(n) | O(log n) |
-| **Traversal** | O(n) | O(n) | O(n) |
+| **Chèn** | O(log n) | O(n) | O(log n) |
+| **Tìm kiếm** | O(log n) | O(n) | O(log n) |
+| **Xóa** | O(log n) | O(n) | O(log n) |
+| **Duyệt** | O(n) | O(n) | O(n) |
 
-### **2. 💾 SPACE COMPLEXITY**
+### **2. 💾 ĐỘ PHỨC TẠP KHÔNG GIAN**
 
-| Component | Space Complexity | Details |
+| Thành phần | Độ phức tạp không gian | Chi tiết |
 |-----------|------------------|---------|
-| **Contact Objects** | O(n) | n contacts with constant data |
-| **Tree Structures** | O(n) | n nodes with constant overhead |
-| **Index Management** | O(n) | Multiple indexes, each O(n) |
-| **Overall System** | O(n) | Linear with contact count |
+| **Đối tượng liên hệ** | O(n) | n liên hệ với dữ liệu không đổi |
+| **Cấu trúc cây** | O(n) | n nút với chi phí cố định |
+| **Quản lý chỉ mục** | O(n) | Nhiều chỉ mục, mỗi O(n) |
+| **Hệ thống tổng thể** | O(n) | Tuyến tính với số lượng liên hệ |
 
 ---
 
-## 🚀 CONCLUSION
+## 🚀 KẾT LUẬN
 
-Tài liệu UML này tuân thủ chuẩn **UML 2.5** và cung cấp cái nhìn toàn diện về kiến trúc hệ thống Quản lý Danh bạ Thông minh. Các diagram được thiết kế để:
+Tài liệu UML này tuân thủ chuẩn **UML 2.5** và cung cấp cái nhìn toàn diện về kiến trúc hệ thống Quản lý Danh bạ Thông minh. Các biểu đồ được thiết kế để:
 
-1. **🎯 Clarity**: Hiểu rõ cấu trúc và relationships
-2. **🔧 Implementation**: Hướng dẫn development
-3. **📊 Documentation**: Tài liệu kỹ thuật chuẩn
-4. **🚀 Maintenance**: Dễ dàng maintain và extend
+1. **🎯 Rõ ràng**: Hiểu rõ cấu trúc và quan hệ
+2. **🔧 Triển khai**: Hướng dẫn phát triển
+3. **📊 Tài liệu kỹ thuật**: Tài liệu kỹ thuật chuẩn
+4. **🚀 Bảo trì**: Dễ dàng bảo trì và mở rộng
 
-**UML Standards Compliance:**
-- ✅ **Class Diagrams**: Proper notation và relationships
-- ✅ **Sequence Diagrams**: Message flow và timing
-- ✅ **Component Diagrams**: System architecture
-- ✅ **Activity Diagrams**: Business process flow
-- ✅ **State Diagrams**: Object lifecycle
-- ✅ **Object Diagrams**: Instance examples
+**Việc tuân thủ chuẩn UML:**
+- ✅ **Sơ đồ lớp**: Ký hiệu và quan hệ
+- ✅ **Sơ đồ dịch chuyển**: Luồng tin nhắn và thời gian
+- ✅ **Sơ đồ thành phần**: Kiến trúc hệ thống
+- ✅ **Sơ đồ hoạt động**: Luồng quy trình kinh doanh
+- ✅ **Sơ đồ trạng thái**: Đời sống đối tượng
+- ✅ **Sơ đồ đối tượng**: Ví dụ thể hiện
 
 Tài liệu này có thể được sử dụng để:
-- **Development**: Hướng dẫn implementation
-- **Code Review**: Kiểm tra design compliance
-- **Documentation**: Technical documentation
-- **Training**: Developer onboarding
-- **Maintenance**: System understanding
+- **Phát triển**: Hướng dẫn triển khai
+- **Đánh giá code**: Kiểm tra việc tuân thủ thiết kế
+- **Tài liệu kỹ thuật**: Tài liệu kỹ thuật
+- **Đào tạo**: Hướng dẫn đào tạo nhân viên
+- **Bảo trì**: Hiểu biết về hệ thống
