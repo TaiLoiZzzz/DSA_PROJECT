@@ -155,7 +155,7 @@ classDiagram
         -string message
     }
     
-    "1" ContactManager o-- "0..*" Contact : manages
+    ContactManager "1" o-- "0..*" Contact : manages
     ContactUI --> ContactManager : uses
     ContactException <|-- ContactNotFound : inheritance
     ContactException <|-- ContactAlreadyExists : inheritance
@@ -349,7 +349,7 @@ graph TB
     ContactEntity[Contact]
 
     UI --> Manager
-    Manager o-- ContactEntity
+    Manager --> ContactEntity
 ```
 
 ## 5. State Diagram
@@ -450,9 +450,9 @@ flowchart TD
 graph TB
     %% Package diagram with valid IDs
     subgraph System
-        UIPkg["UI Package"]
-        CorePkg["Core Package"]
-        ExPkg["Exception Package"]
+        UIPkg[UI Package]
+        CorePkg[Core Package]
+        ExPkg[Exception Package]
     end
 
     UIPkg --> CorePkg
@@ -465,37 +465,12 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "ContactManager Instance"
-        CM[ContactManager: instance]
-        CM_ByName[contactsByName: map]
-        CM_ByPhone[contactsByPhone: map]
-        CM_ByEmail[contactsByEmail: map]
-        CM_ById[contactsById: map]
-    end
-    
-    subgraph "Contact Objects"
-        C1[Contact: id=1, name="John Doe"]
-        C2[Contact: id=2, name="Jane Smith"]
-        C3[Contact: id=3, name="Bob Johnson"]
-    end
-    
-    subgraph "Index Mappings"
-        CM_ByName --> C1
-        CM_ByName --> C2
-        CM_ByName --> C3
-        
-        CM_ByPhone --> C1
-        CM_ByPhone --> C2
-        CM_ByPhone --> C3
-        
-        CM_ByEmail --> C1
-        CM_ByEmail --> C2
-        CM_ByEmail --> C3
-        
-        CM_ById --> C1
-        CM_ById --> C2
-        CM_ById --> C3
-    end
+    CM[ContactManager]
+    C1[Contact id=1 - John Doe]
+    C2[Contact id=2 - Jane Smith]
+
+    CM --> C1
+    CM --> C2
 ```
 
 ## 9. Deployment Diagram
