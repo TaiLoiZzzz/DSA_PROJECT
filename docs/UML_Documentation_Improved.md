@@ -745,7 +745,7 @@ stateDiagram-v2
 
 ```mermaid
 graph TB
-    subgraph "Thể hiện hệ thống: Hệ thống Quản lý Danh bạ"
+    subgraph "System Instance: Contact Management System"
         subgraph "ContactManager Instance"
             CM[ContactManager<br/>instance: 0x7fff1234]
         end
@@ -770,18 +770,18 @@ graph TB
         end
     end
     
-    CM --> BST1 : quản lý
-    CM --> BST2 : quản lý
-    CM --> RBT1 : quản lý
-    CM --> RBT2 : quản lý
+    CM --> BST1 : manages
+    CM --> BST2 : manages
+    CM --> RBT1 : manages
+    CM --> RBT2 : manages
     
-    BST1 --> N1 : chứa
-    BST1 --> N2 : chứa
-    BST1 --> N3 : chứa
+    BST1 --> N1 : contains
+    BST1 --> N2 : contains
+    BST1 --> N3 : contains
     
-    N1 --> C1 : tham chiếu
-    N2 --> C2 : tham chiếu
-    N3 --> C3 : tham chiếu
+    N1 --> C1 : references
+    N2 --> C2 : references
+    N3 --> C3 : references
     
     style CM fill:#e8f5e8
     style C1 fill:#fce4ec
