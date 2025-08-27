@@ -2,6 +2,8 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include <string>
+#include <set>
 
 using namespace std;
 
@@ -32,7 +34,7 @@ void ContactUI::run() {
             case 4:
                 displayAllContacts();
                 break;
-                    case 5:
+        case 5:
             cout << "\n Tổng số liên hệ: " << manager->getTotalContacts() << endl;
             break;
         case 6:
@@ -43,7 +45,7 @@ void ContactUI::run() {
             break;
         default:
             cout << " Lựa chọn không hợp lệ! Vui lòng thử lại." << endl;
-             
+            break;
         }
         
         if (choice != 7) {
@@ -112,6 +114,7 @@ void ContactUI::showContactMenu() const {
             return;
         default:
             cout << " Lựa chọn không hợp lệ!" << endl;
+            break;
     }
 }
 
@@ -243,6 +246,7 @@ void ContactUI::showEditContactMenu(Contact* contact) const {
                 return;
             default:
                 cout << " Lựa chọn không hợp lệ! Vui lòng thử lại." << endl;
+                break;
         }
         
         if (choice != 7) {
@@ -599,6 +603,7 @@ void ContactUI::searchContacts() const {
         default:
             cout << " Lựa chọn không hợp lệ!" << endl;
             pause();
+            break;
     }
 }
 
@@ -655,7 +660,15 @@ string ContactUI::getStringInput(const string& prompt) const {
 int ContactUI::getIntInput(const string& prompt) const {
     int value;
     cout << prompt;
-    cin >> value;
+    
+    // Kiểm tra xem input có phải là số không
+    while (!(cin >> value)) {
+        cout << " Lỗi: Vui lòng nhập một số nguyên hợp lệ!" << endl;
+        cin.clear(); // Xóa trạng thái lỗi
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Xóa buffer
+        cout << prompt;
+    }
+    
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return value;
 }
