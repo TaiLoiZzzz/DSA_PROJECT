@@ -751,9 +751,9 @@ graph TB
         end
         
         subgraph "Contact Instances"
-            C1[Contact<br/>id: 1<br/>name: "Nguyen Van A"<br/>phone: "0123456789"<br/>email: "a@email.com"]
-            C2[Contact<br/>id: 2<br/>name: "Tran Thi B"<br/>phone: "0987654321"<br/>email: "b@email.com"]
-            C3[Contact<br/>id: 3<br/>name: "Le Van C"<br/>phone: "1122334455"<br/>email: "c@email.com"]
+            C1[Contact<br/>id: 1<br/>name: Nguyen Van A<br/>phone: 0123456789<br/>email: a@email.com]
+            C2[Contact<br/>id: 2<br/>name: Tran Thi B<br/>phone: 0987654321<br/>email: b@email.com]
+            C3[Contact<br/>id: 3<br/>name: Le Van C<br/>phone: 1122334455<br/>email: c@email.com]
         end
         
         subgraph "Index Instances"
@@ -764,9 +764,9 @@ graph TB
         end
         
         subgraph "Node Instances"
-            N1[Node<br/>key: "Nguyen Van A"<br/>value: Contact*<br/>left: nullptr<br/>right: Node*]
-            N2[Node<br/>key: "Tran Thi B"<br/>value: Contact*<br/>left: Node*<br/>right: Node*]
-            N3[Node<br/>key: "Le Van C"<br/>value: Contact*<br/>left: Node*<br/>right: nullptr]
+            N1[Node<br/>key: Nguyen Van A<br/>value: Contact*<br/>left: nullptr<br/>right: Node*]
+            N2[Node<br/>key: Tran Thi B<br/>value: Contact*<br/>left: Node*<br/>right: Node*]
+            N3[Node<br/>key: Le Van C<br/>value: Contact*<br/>left: Node*<br/>right: nullptr]
         end
     end
     
