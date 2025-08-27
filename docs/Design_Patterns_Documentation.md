@@ -505,6 +505,115 @@ public:
 
 ---
 
+## 🌳 **CUSTOM DATA STRUCTURES - BST & RBT**
+
+### 1. **BINARY SEARCH TREE (BST)**
+```cpp
+template<typename K, typename V>
+class BinarySearchTree {
+    // Sử dụng cho: contactsByName và contactsById
+    // Ưu điểm: Sắp xếp tự động, tìm kiếm O(log n)
+    // Nhược điểm: Có thể mất cân bằng
+};
+```
+
+**Ứng dụng trong dự án:**
+- **`contactsByName`**: Sắp xếp liên hệ theo tên alphabetically
+- **`contactsById`**: Sắp xếp liên hệ theo ID tăng dần
+
+### 2. **RED-BLACK TREE (RBT)**
+```cpp
+template<typename K, typename V>
+class RedBlackTree {
+    // Sử dụng cho: contactsByPhone và contactsByEmail
+    // Ưu điểm: Cân bằng tự động, đảm bảo O(log n)
+    // Đặc điểm: Rotation và color balancing
+};
+```
+
+**Ứng dụng trong dự án:**
+- **`contactsByPhone`**: Quản lý số điện thoại với cân bằng tự động
+- **`contactsByEmail`**: Quản lý email với cân bằng tự động
+
+### 3. **COMPARISON WITH STL CONTAINERS**
+
+| **Feature** | **STL map/set** | **Custom BST** | **Custom RBT** |
+|-------------|------------------|----------------|----------------|
+| **Performance** | O(log n) | O(log n) | O(log n) |
+| **Auto-balancing** | ✅ Yes | ❌ No | ✅ Yes |
+| **Memory overhead** | Low | Medium | Medium |
+| **Customization** | Limited | High | High |
+| **Debug visibility** | Limited | Full | Full |
+
+### 4. **IMPLEMENTATION DETAILS**
+
+#### **BST Operations:**
+```cpp
+void insert(const K& key, const V& value);     // O(log n)
+V* find(const K& key);                         // O(log n)
+bool remove(const K& key);                     // O(log n)
+vector<pair<K, V>> getAllPairs() const;        // O(n)
+```
+
+#### **RBT Operations:**
+```cpp
+void insert(const K& key, const V& value);     // O(log n) + balancing
+V* find(const K& key);                         // O(log n)
+bool remove(const K& key);                     // O(log n) + balancing
+void leftRotate(Node* x);                      // O(1)
+void rightRotate(Node* x);                     // O(1)
+```
+
+### 5. **ADVANTAGES OF CUSTOM IMPLEMENTATION**
+
+1. **Educational Value:**
+   - Hiểu rõ cách hoạt động của BST và RBT
+   - Thực hành thuật toán tree balancing
+   - Debug và visualize cấu trúc dữ liệu
+
+2. **Performance Control:**
+   - Tối ưu hóa cho use case cụ thể
+   - Kiểm soát memory allocation
+   - Custom traversal algorithms
+
+3. **Debugging & Monitoring:**
+   - `printTreeStructures()` method
+   - Visual representation của cây
+   - Performance metrics
+
+### 6. **MEMORY MANAGEMENT**
+
+```cpp
+// Proper cleanup trong destructor
+~BinarySearchTree() { clear(); }
+~RedBlackTree() { clear(); delete nil; }
+
+// Recursive deletion
+void clearRecursive(Node* node) {
+    if (node) {
+        clearRecursive(node->left);
+        clearRecursive(node->right);
+        delete node;
+    }
+}
+```
+
+### 7. **FUTURE ENHANCEMENTS**
+
+1. **AVL Tree Implementation:**
+   - Cân bằng nghiêm ngặt hơn RBT
+   - Tốt cho read-heavy workloads
+
+2. **B-Tree Implementation:**
+   - Tối ưu cho disk-based storage
+   - Hỗ trợ dữ liệu rất lớn
+
+3. **Thread-Safe Operations:**
+   - Concurrent access support
+   - Lock-free algorithms
+
+---
+
 ## 📝 KẾT LUẬN
 
 ### 🎯 **TÓM TẮT LỢI ÍCH:**

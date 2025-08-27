@@ -1,29 +1,38 @@
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-TARGET = smart_contact_cli
-SOURCES = main.cpp Contact.cpp ContactManager.cpp ContactUI.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
+# Main Makefile - Sử dụng để build từ thư mục gốc
+.PHONY: all clean run build
 
-.PHONY: all clean run
+all: build
 
-all: $(TARGET)
-
-$(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET)
-
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-run: $(TARGET)
-	./$(TARGET)
+build:
+	@echo "🔨 Building project with new directory structure..."
+	@cd build && make
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	@echo "🧹 Cleaning build files..."
+	@cd build && make clean
+	@rm -rf build/*.o build/smart_contact_cli*
 
-# Windows specific
-ifeq ($(OS),Windows_NT)
-clean:
-	del /Q *.o $(TARGET).exe 2>nul || exit 0
-run: $(TARGET)
-	./$(TARGET).exe
-endif
+run: build
+	@echo "🚀 Running application..."
+	@cd build && make run
+
+# Tạo thư mục build nếu chưa có
+setup:
+	@echo "📁 Setting up build directory..."
+	@mkdir -p build
+	@echo "✅ Build directory ready!"
+
+# Install dependencies (nếu cần)
+install:
+	@echo "📦 No external dependencies required for this project"
+
+# Help
+help:
+	@echo "Available targets:"
+	@echo "  all     - Build the project (default)"
+	@echo "  build   - Build the project"
+	@echo "  clean   - Clean build files"
+	@echo "  run     - Build and run the application"
+	@echo "  setup   - Setup build directory"
+	@echo "  install - Install dependencies"
+	@echo "  help    - Show this help message"

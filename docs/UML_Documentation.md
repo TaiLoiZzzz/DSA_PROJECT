@@ -40,6 +40,21 @@ Hệ thống Quản lý Danh bạ Thông minh là một ứng dụng C++ đượ
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
+│                   CUSTOM DATA STRUCTURES                   │
+├─────────────────────────────────────────────────────────────┤
+│  BinarySearchTree<K,V>                                     │
+│  ├── contactsByName (string → Contact*)                    │
+│  ├── contactsById (int → Contact*)                         │
+│  └── Sắp xếp tự động, tìm kiếm O(log n)                  │
+├─────────────────────────────────────────────────────────────┤
+│  RedBlackTree<K,V>                                         │
+│  ├── contactsByPhone (string → Contact*)                   │
+│  ├── contactsByEmail (string → Contact*)                   │
+│  └── Cân bằng tự động, đảm bảo O(log n)                   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
 │                      DATA LAYER                           │
 ├─────────────────────────────────────────────────────────────┤
 │  Contact (Model)                                           │
@@ -119,10 +134,10 @@ classDiagram
 classDiagram
     class ContactManager {
         -static ContactManager* instance
-        -map<string, Contact*> contactsByName
-        -map<string, Contact*> contactsByPhone
-        -map<string, Contact*> contactsByEmail
-        -map<int, Contact*> contactsById
+        -BinarySearchTree<string, Contact*> contactsByName
+        -RedBlackTree<string, Contact*> contactsByPhone
+        -RedBlackTree<string, Contact*> contactsByEmail
+        -BinarySearchTree<int, Contact*> contactsById
         
         -ContactManager()
         +static ContactManager* getInstance()
@@ -155,10 +170,10 @@ classDiagram
 **Mô tả chi tiết:**
 - **Design Pattern:** Singleton - Đảm bảo chỉ có một instance duy nhất
 - **Cấu trúc dữ liệu:**
-  - `contactsByName`: Map tên → Contact (O(log n) tìm kiếm)
-  - `contactsByPhone`: Map số điện thoại → Contact (O(log n) tìm kiếm)
-  - `contactsByEmail`: Map email → Contact (O(log n) tìm kiếm)
-  - `contactsById`: Map ID → Contact (O(log n) tìm kiếm)
+  - `contactsByName`: Binary Search Tree tên → Contact (O(log n) tìm kiếm, sắp xếp tự động)
+  - `contactsByPhone`: Red-Black Tree số điện thoại → Contact (O(log n) tìm kiếm, cân bằng tự động)
+  - `contactsByEmail`: Red-Black Tree email → Contact (O(log n) tìm kiếm, cân bằng tự động)
+  - `contactsById`: Binary Search Tree ID → Contact (O(log n) tìm kiếm, sắp xếp tự động)
 
 - **Chức năng chính:**
   - **CRUD Operations**: Thêm, xóa, tìm kiếm, hiển thị liên hệ
