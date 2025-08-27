@@ -770,18 +770,18 @@ graph TB
         end
     end
     
-    CM --> BST1 : manages
-    CM --> BST2 : manages
-    CM --> RBT1 : manages
-    CM --> RBT2 : manages
+    CM --> BST1
+    CM --> BST2
+    CM --> RBT1
+    CM --> RBT2
     
-    BST1 --> N1 : contains
-    BST1 --> N2 : contains
-    BST1 --> N3 : contains
+    BST1 --> N1
+    BST1 --> N2
+    BST1 --> N3
     
-    N1 --> C1 : references
-    N2 --> C2 : references
-    N3 --> C3 : references
+    N1 --> C1
+    N2 --> C2
+    N3 --> C3
     
     style CM fill:#e8f5e8
     style C1 fill:#fce4ec
