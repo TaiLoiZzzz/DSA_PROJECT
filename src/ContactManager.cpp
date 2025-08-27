@@ -144,7 +144,7 @@ set<Contact*> ContactManager::searchByPhone(const string& phone) {
     }
     
     // Debug: Print what we're searching for
-    cout << "  🔍 Searching for phone numbers containing: " << cleanPhone << endl;
+    cout << "   Searching for phone numbers containing: " << cleanPhone << endl;
     
     auto searchCallback = [&results, &cleanPhone](const string& key, Contact* contact) {
         string storedPhone = key;

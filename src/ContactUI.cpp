@@ -75,7 +75,7 @@ void ContactUI::showMainMenu() const {
     cout << "3. Tìm kiếm liên hệ" << endl;
     cout << "4. Hiển thị tất cả liên hệ" << endl;
     cout << "5. Thống kê" << endl;
-    cout << "6. 🔍 Hiển thị cấu trúc cây dữ liệu" << endl;
+    cout << "6.  Hiển thị cấu trúc cây dữ liệu" << endl;
     cout << "7. Thoát" << endl;
     cout << "=================" << endl;
 }
@@ -635,7 +635,7 @@ void ContactUI::displayAllContacts() const {
 
 void ContactUI::displaySearchResults(const set<Contact*>& results) const {
     if (results.empty()) {
-        cout << "🔍 Không tìm thấy liên hệ nào!" << endl;
+        cout << " Không tìm thấy liên hệ nào!" << endl;
         return;
     }
     
