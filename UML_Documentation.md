@@ -451,34 +451,34 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[Nhập dữ liệu] --> B{Kiểm tra rỗng}
-    B -->|Rỗng| C[Hiển thị lỗi "Không được để trống"]
-    B -->|Không rỗng| D{Kiểm tra loại dữ liệu}
+    B --> C[Hiển thị lỗi "Không được để trống"]
+    B --> D{Kiểm tra loại dữ liệu}
     
-    D -->|Tên| E{Độ dài >= 2 ký tự}
-    D -->|Số điện thoại| F{Độ dài <= 11 và chỉ chứa số}
-    D -->|Email| G{Kiểm tra format email}
-    D -->|Địa chỉ| H{Độ dài >= 5 ký tự}
+    D --> E{Độ dài >= 2 ký tự}
+    D --> F{Độ dài <= 11 và chỉ chứa số}
+    D --> G{Kiểm tra format email}
+    D --> H{Độ dài >= 5 ký tự}
     
-    E -->|Không| I[Hiển thị lỗi "Tên phải >= 2 ký tự"]
-    E -->|Có| J[Kiểm tra trùng lặp]
+    E --> I[Hiển thị lỗi "Tên phải >= 2 ký tự"]
+    E --> J[Kiểm tra trùng lặp]
     
-    F -->|Không| K[Hiển thị lỗi "Số điện thoại không hợp lệ"]
-    F -->|Có| L[Kiểm tra trùng lặp]
+    F --> K[Hiển thị lỗi "Số điện thoại không hợp lệ"]
+    F --> L[Kiểm tra trùng lặp]
     
-    G -->|Không| M[Hiển thị lỗi "Email không hợp lệ"]
-    G -->|Có| N[Kiểm tra trùng lặp]
+    G --> M[Hiển thị lỗi "Email không hợp lệ"]
+    G --> N[Kiểm tra trùng lặp]
     
-    H -->|Không| O[Hiển thị lỗi "Địa chỉ phải >= 5 ký tự"]
-    H -->|Có| P[Dữ liệu hợp lệ]
+    H --> O[Hiển thị lỗi "Địa chỉ phải >= 5 ký tự"]
+    H --> P[Dữ liệu hợp lệ]
     
-    J -->|Trùng| Q[Hiển thị lỗi "Đã tồn tại"]
-    J -->|Không| P
+    J --> Q[Hiển thị lỗi "Đã tồn tại"]
+    J --> P
     
-    L -->|Trùng| R[Hiển thị lỗi "Số điện thoại đã tồn tại"]
-    L -->|Không| P
+    L --> R[Hiển thị lỗi "Số điện thoại đã tồn tại"]
+    L --> P
     
-    N -->|Trùng| S[Hiển thị lỗi "Email đã tồn tại"]
-    N -->|Không| P
+    N --> S[Hiển thị lỗi "Email đã tồn tại"]
+    N --> P
     
     C --> T[Yêu cầu nhập lại]
     I --> T
