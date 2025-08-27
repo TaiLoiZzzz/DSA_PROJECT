@@ -54,6 +54,29 @@ bool Contact::hasPhoneNumber(const string& phone) const {
 }
 ```
 
+#### **Index Synchronization:**
+```cpp
+// ContactManager.cpp - Dòng 240-280
+void ContactManager::syncAllIndexes(Contact* contact) {
+    cout << "🔄 Syncing all indexes for contact '" << contact->getName() << "'..." << endl;
+    
+    // Sync phone numbers
+    for (const auto& phone : contact->getPhoneNumbers()) {
+        contactsByPhone[phone] = contact;
+        cout << "  📱 Synced phone '" << phone << "' to index" << endl;
+    }
+    
+    // Sync emails
+    for (const auto& email : contact->getEmails()) {
+        contactsByEmail[email] = contact;
+        cout << "  📧 Synced email '" << email << "' to index" << endl;
+    }
+    
+    cout << "  📊 Final index sizes - Phones: " << contactsByPhone.size() 
+         << ", Emails: " << contactsByEmail.size() << endl;
+}
+```
+
 ---
 
 ### 🗂️ 2. ContactManager - Singleton Pattern với Multiple Indexes
@@ -116,13 +139,39 @@ map<string, Contact*> contactsByPhone;
 
 **Code implementation:**
 ```cpp
-// ContactManager.cpp - Dòng 120-130
-set<Contact*> ContactManager::searchByPhone(const string& phone) const {
+// ContactManager.cpp - Dòng 116-150
+set<Contact*> ContactManager::searchByPhone(const string& phone) {
     set<Contact*> results;
+    
+    // First try exact match (fastest)
     auto it = contactsByPhone.find(phone);  // O(log n) - exact match
     if (it != contactsByPhone.end()) {
         results.insert(it->second);
+        return results;
     }
+    
+    // If exact match not found, try partial search
+    string cleanPhone = phone;
+    cleanPhone.erase(remove_if(cleanPhone.begin(), cleanPhone.end(),
+                              [](char c) { return !isdigit(c); }), cleanPhone.end());
+    
+    if (cleanPhone.empty()) {
+        return results;
+    }
+    
+    // Search for partial matches in phone numbers
+    for (const auto& pair : contactsByPhone) {  // O(n) - iterate all
+        string storedPhone = pair.first;
+        string cleanStoredPhone = storedPhone;
+        cleanStoredPhone.erase(remove_if(cleanStoredPhone.begin(), cleanStoredPhone.end(),
+                                       [](char c) { return !isdigit(c); }), cleanStoredPhone.end());
+        
+        // Check if clean input is found in clean stored phone
+        if (cleanStoredPhone.find(cleanPhone) != string::npos) {
+            results.insert(pair.second);
+        }
+    }
+    
     return results;
 }
 ```
@@ -233,7 +282,10 @@ set<Contact*> ContactManager::searchByPhone(const string& phone) const {
 }
 ```
 
-**Độ phức tạp**: O(log n) - tìm kiếm chính xác trong Red-Black Tree
+**Độ phức tạp**: 
+- **Exact match**: O(log n) - tìm kiếm chính xác trong Red-Black Tree
+- **Partial search**: O(n) - duyệt tất cả số điện thoại để tìm kiếm mờ
+- **Tổng**: O(log n + n) ≈ O(n) trong trường hợp xấu nhất
 
 #### **C. Tìm Kiếm Theo Email**
 ```cpp

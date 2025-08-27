@@ -62,8 +62,11 @@ classDiagram
         +int getTotalContacts()
         +bool isEmpty()
         +void clearAll()
+        +void syncAllIndexes(Contact*)  // ⚠️ QUAN TRỌNG: Đồng bộ tất cả index
         -void removeFromIndexes(Contact*)
         -void addToIndexes(Contact*)
+        -void updatePhoneIndex(Contact*, string, string)
+        -void updateEmailIndex(Contact*, string, string)
         -bool isValidPhone(string)
         -bool isValidEmail(string)
     }
